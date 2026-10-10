@@ -1,0 +1,33 @@
+/* ReportsPage Dedicated Styles */
+
+.reports-page {
+  width: 100%;
+}
+
+.report-stat-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.report-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(20, 43, 74, 0.08);
+}
+
+.report-chart-container {
+  min-height: 220px;
+}
+
+@media print {
+  .report-no-print {
+    display: none !important;
+  }
+  .reports-page {
+    padding: 0 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .report-date-filter-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,34 @@
+/* ReceiptModal Dedicated Styles */
+
+.receipt-modal-wrapper {
+  max-width: 28rem;
+  width: 100%;
+}
+
+.receipt-thermal-paper {
+  background-color: #FFFFFF;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .receipt-printable, .receipt-printable * {
+    visibility: visible;
+  }
+  .receipt-printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .no-print, .no-print-bg {
+    display: none !important;
+    background: transparent !important;
+  }
+}

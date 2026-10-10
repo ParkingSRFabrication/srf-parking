@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Camera, X, AlertCircle } from 'lucide-react';
+import './QRScannerModal.css';
 
 export function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
   const [error, setError] = useState(null);
@@ -63,25 +64,26 @@ export function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200">
-        <div className="flex items-center justify-between px-5 py-4 bg-[#142B4A] text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200">
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 bg-[#142B4A] text-white">
           <div className="flex items-center gap-2">
             <Camera className="w-5 h-5 text-blue-300" />
-            <h3 className="font-semibold text-sm">Scan Token / Pass QR Code</h3>
+            <h3 className="font-semibold text-xs sm:text-sm">Scan Token / Pass QR</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-300 hover:text-white rounded-lg hover:bg-white/10"
+            className="p-1.5 text-slate-300 hover:text-white rounded-lg hover:bg-white/10"
+            aria-label="Close scanner"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-5 flex flex-col items-center">
+        <div className="p-4 sm:p-5 flex flex-col items-center">
           <div
             id="qr-reader-container"
-            className="w-full aspect-square bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-300 relative"
+            className="w-full aspect-square bg-slate-100 rounded-2xl overflow-hidden border-2 border-dashed border-slate-300 relative"
           />
 
           {error && (
@@ -98,7 +100,7 @@ export function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
           <button
             type="button"
             onClick={onClose}
-            className="mt-4 w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition"
+            className="mt-4 w-full py-3 bg-slate-100 hover:bg-slate-200 active:scale-[0.99] text-slate-700 text-xs sm:text-sm font-bold rounded-xl transition"
           >
             Cancel & Enter Manually
           </button>

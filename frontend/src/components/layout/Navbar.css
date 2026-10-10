@@ -1,0 +1,29 @@
+/* Navbar Dedicated Styles */
+
+.navbar-container {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.navbar-clock-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  background-color: #F1F5F9;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  color: #334155;
+}
+
+.navbar-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}

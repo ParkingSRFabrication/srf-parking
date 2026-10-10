@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { api, getErrorMessage } from '../services/api.js';
 import { formatCurrency, formatDuration, CATEGORY_LABELS } from '../utils/formatters.js';
+import './TariffsPage.css';
 
 export function TariffsPage() {
   const [tariffs, setTariffs] = useState([]);
@@ -178,7 +179,36 @@ export function TariffsPage() {
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile View: Tariff Cards (< md) */}
+        <div className="block md:hidden divide-y divide-slate-100">
+          {tariffs.map(t => (
+            <div key={t._id} className="p-3.5 hover:bg-slate-50 transition space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="font-bold text-slate-900 capitalize text-sm">
+                    {CATEGORY_LABELS[t.category] || t.category}
+                  </span>
+                  <span className="block text-[11px] text-slate-500">{t.name}</span>
+                </div>
+                <button
+                  onClick={() => handleOpenEdit(t)}
+                  className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold text-xs"
+                >
+                  <Edit className="w-3.5 h-3.5" />
+                  <span>Edit</span>
+                </button>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-slate-50 text-[11px]">
+                <span className="text-slate-600">Base: <strong className="text-slate-900">{formatCurrency(t.firstSlabAmount)}</strong></span>
+                <span className="text-slate-600">Addl: <strong className="text-slate-900">{t.billingMethod === '24_hour_daily' ? formatCurrency(t.additionalDayAmount) : '-'}</strong></span>
+                <span className="text-slate-500">Grace: {t.freeGraceMinutes ? `${t.freeGraceMinutes}m` : '0m'}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop View: Full Table (>= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">

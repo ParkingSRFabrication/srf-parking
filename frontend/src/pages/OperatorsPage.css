@@ -1,0 +1,31 @@
+/* OperatorsPage Dedicated Styles */
+
+.operators-page {
+  width: 100%;
+}
+
+.operator-badge-admin {
+  background-color: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
+}
+
+.operator-badge-staff {
+  background-color: #DBEAFE;
+  color: #1E40AF;
+  border: 1px solid #BFDBFE;
+}
+
+.operator-modal-backdrop {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+@media (max-width: 640px) {
+  .operator-card-item {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .operator-card-item:active {
+    transform: scale(0.99);
+  }
+}

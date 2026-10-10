@@ -12,6 +12,7 @@ import {
   Database
 } from 'lucide-react';
 import { api, getErrorMessage } from '../services/api.js';
+import './SettingsPage.css';
 
 export function SettingsPage() {
   const [settings, setSettings] = useState(null);

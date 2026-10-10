@@ -2,6 +2,7 @@ import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Printer, X, CheckCircle, ShieldCheck } from 'lucide-react';
 import { formatCurrency, formatDateTime, formatDuration, CATEGORY_LABELS } from '../../utils/formatters.js';
+import './ReceiptModal.css';
 
 export function ReceiptModal({ isOpen, onClose, data, type = 'entry' }) {
   if (!isOpen || !data) return null;
@@ -18,13 +19,13 @@ export function ReceiptModal({ isOpen, onClose, data, type = 'entry' }) {
   const categoryName = CATEGORY_LABELS[data.vehicleType] || data.vehicleType || '-';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in no-print-bg">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in no-print-bg">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 max-h-[92vh] flex flex-col">
         {/* Modal Top Bar */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#142B4A] text-white no-print">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 bg-[#142B4A] text-white shrink-0 no-print">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold text-sm tracking-wide">
+            <span className="font-semibold text-xs sm:text-sm tracking-wide">
               {isEntry ? 'Entry Token Generated' : isPass ? 'Monthly Pass Receipt' : 'Exit & Payment Receipt'}
             </span>
           </div>
@@ -37,7 +38,7 @@ export function ReceiptModal({ isOpen, onClose, data, type = 'entry' }) {
         </div>
 
         {/* Receipt Body (Targeted for Thermal & A4 Printing) */}
-        <div id="printable-receipt" className="p-6 text-slate-900 bg-white">
+        <div id="printable-receipt" className="p-4 sm:p-6 text-slate-900 bg-white flex-1 overflow-y-auto">
           {/* Receipt Header */}
           <div className="text-center pb-4 border-b border-dashed border-slate-300">
             <div className="font-black text-lg text-[#142B4A] tracking-tight">
@@ -183,21 +184,21 @@ export function ReceiptModal({ isOpen, onClose, data, type = 'entry' }) {
         </div>
 
         {/* Modal Actions (No Print) */}
-        <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 border-t border-slate-200 no-print">
+        <div className="flex items-center gap-3 px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-50 border-t border-slate-200 shrink-0 no-print">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-slate-300 text-slate-700 font-medium rounded-xl hover:bg-slate-100 transition text-sm"
+            className="flex-1 py-3 px-4 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-100 transition text-xs sm:text-sm active:scale-[0.98]"
           >
             Close
           </button>
           <button
             type="button"
             onClick={handlePrint}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#142B4A] hover:bg-[#2457A7] text-white font-medium rounded-xl shadow-md transition text-sm"
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-[#142B4A] hover:bg-[#2457A7] text-white font-bold rounded-xl shadow-md transition text-xs sm:text-sm active:scale-[0.98]"
           >
             <Printer className="w-4 h-4" />
-            Print Receipt
+            <span>Print Receipt</span>
           </button>
         </div>
       </div>

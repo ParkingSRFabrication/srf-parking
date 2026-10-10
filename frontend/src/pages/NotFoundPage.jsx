@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AlertCircle, Home } from 'lucide-react';
+import './NotFoundPage.css';
 
 export function NotFoundPage() {
   return (

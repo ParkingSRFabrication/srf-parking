@@ -1,4 +1,5 @@
 import React from 'react';
+import './BrandLogo.css';
 
 export function BrandLogo({ size = 'default', showSubtitle = true, inverted = false }) {
   const isLarge = size === 'large';

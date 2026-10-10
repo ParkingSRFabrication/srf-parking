@@ -1,0 +1,21 @@
+/* BrandLogo Dedicated Styles */
+
+.brand-logo-mark {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.brand-logo-mark:hover {
+  transform: scale(1.05);
+}
+
+.brand-dot-accent {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: #C9343A;
+  border-radius: 9999px;
+  border: 2px solid #FFFFFF;
+}

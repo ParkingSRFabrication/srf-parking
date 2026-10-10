@@ -12,6 +12,7 @@ import {
 import { api, getErrorMessage } from '../services/api.js';
 import { formatCurrency, formatDate, normalizeVehicleNumber, CATEGORY_LABELS } from '../utils/formatters.js';
 import { ReceiptModal } from '../components/common/ReceiptModal.jsx';
+import './MonthlyPassPage.css';
 
 export function MonthlyPassPage() {
   const [vehicleNumber, setVehicleNumber] = useState('');
@@ -208,10 +209,11 @@ export function MonthlyPassPage() {
                 <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="tel"
+                  inputMode="numeric"
                   placeholder="10-digit mobile"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="w-full pl-9 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                  className="w-full pl-9 pr-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
                 />
               </div>
             </div>
@@ -228,7 +230,7 @@ export function MonthlyPassPage() {
                 required
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
               />
             </div>
 
@@ -238,11 +240,12 @@ export function MonthlyPassPage() {
               </label>
               <input
                 type="number"
+                inputMode="numeric"
                 min="0"
                 required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-4 py-2.5 font-bold text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                className="w-full px-4 py-3 font-bold text-base bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
               />
             </div>
           </div>
@@ -256,7 +259,7 @@ export function MonthlyPassPage() {
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7]"
+                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7]"
               >
                 <option value="CASH">CASH</option>
                 <option value="UPI">UPI</option>
@@ -274,7 +277,7 @@ export function MonthlyPassPage() {
                 placeholder="e.g. UPI UTR number or receipt reference"
                 value={paymentReference}
                 onChange={(e) => setPaymentReference(e.target.value)}
-                className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7]"
+                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7]"
               />
             </div>
           </div>
@@ -284,14 +287,14 @@ export function MonthlyPassPage() {
             <button
               type="submit"
               disabled={loading || !vehicleNumber || !customerName}
-              className="w-full py-3.5 px-6 bg-[#142B4A] hover:bg-[#2457A7] text-white font-extrabold text-sm rounded-2xl shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full min-h-[52px] py-4 px-6 bg-[#142B4A] hover:bg-[#2457A7] active:scale-[0.99] text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <CreditCard className="w-5 h-5 text-purple-300" />
-                  <span>Issue Pass ({formatCurrency(amount)}) & Generate Card Slip</span>
+                  <CreditCard className="w-5 h-5 text-purple-300 shrink-0" />
+                  <span>Issue Pass ({formatCurrency(amount)}) & Generate Slip</span>
                 </>
               )}
             </button>

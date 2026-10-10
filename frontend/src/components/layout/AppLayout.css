@@ -1,0 +1,22 @@
+/* AppLayout Dedicated Styles */
+
+.app-layout-root {
+  min-height: 100vh;
+  background-color: #F8FAFC;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main-content {
+  flex: 1 1 0%;
+  width: 100%;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 1024px) {
+  .app-main-content-wrapper {
+    padding-left: 16rem;
+  }
+}

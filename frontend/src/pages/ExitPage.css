@@ -1,0 +1,72 @@
+/* ExitPage Styles */
+.exit-page-container {
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Payment Chip Buttons */
+.payment-chip {
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  color: #334155;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-chip:active {
+  transform: scale(0.98);
+}
+
+.payment-chip.active {
+  background-color: #142B4A;
+  color: #FFFFFF;
+  border-color: #142B4A;
+  box-shadow: 0 4px 12px rgba(20, 43, 74, 0.15);
+}
+
+/* Big rupee display */
+.amount-payable-display {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #142B4A;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+@media (min-width: 640px) {
+  .amount-payable-display {
+    font-size: 2.5rem;
+  }
+}
+
+/* Fast exit confirmation */
+.btn-process-exit {
+  min-height: 3.5rem;
+  background-color: #059669;
+  color: #FFFFFF;
+  font-weight: 800;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-process-exit:hover {
+  background-color: #047857;
+  box-shadow: 0 12px 28px -5px rgba(5, 150, 105, 0.4);
+}
+
+.btn-process-exit:active {
+  transform: scale(0.99);
+}

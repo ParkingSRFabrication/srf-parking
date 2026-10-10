@@ -1,0 +1,55 @@
+/* LoginPage Styles */
+.login-screen {
+  min-height: 100vh;
+  background-color: #0F172A;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 28rem;
+  background-color: #FFFFFF;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  border: 1px solid #F1F5F9;
+  position: relative;
+  z-index: 10;
+}
+
+.login-card-header {
+  background-color: #142B4A;
+  padding: 1.5rem;
+  text-align: center;
+  color: #FFFFFF;
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .login-card-header {
+    padding: 2rem;
+  }
+}
+
+.mpin-digit-input {
+  letter-spacing: 0.35em;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.mode-tab-button {
+  flex: 1;
+  padding: 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease;
+}
