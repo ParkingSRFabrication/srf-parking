@@ -15,6 +15,7 @@ import {
 import { api, getErrorMessage } from '../services/api.js';
 import { ReceiptModal } from '../components/common/ReceiptModal.jsx';
 import { normalizeVehicleNumber } from '../utils/formatters.js';
+import './EntryPage.css';
 
 const VEHICLE_CATEGORIES = [
   { id: 'bike', label: 'Two Wheeler', sub: 'Bike / Scooter', icon: Bike },
@@ -172,8 +173,18 @@ export function EntryPage() {
                   placeholder="e.g. MH12AB1234 or DL01CA9999"
                   value={vehicleNumber}
                   onChange={handleVehicleNumberChange}
-                  className="w-full px-4 py-3 text-lg font-mono font-bold tracking-widest uppercase bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                  className="w-full px-4 py-3.5 pr-12 text-xl sm:text-2xl font-mono font-bold tracking-widest uppercase bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
                 />
+                {vehicleNumber && (
+                  <button
+                    type="button"
+                    onClick={() => setVehicleNumber('')}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-200"
+                    aria-label="Clear vehicle registration"
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
               <p className="text-[10px] text-slate-500 mt-1">
                 Enter without spaces. Automatically converted to uppercase.
@@ -187,10 +198,11 @@ export function EntryPage() {
               </label>
               <input
                 type="tel"
+                inputMode="numeric"
                 placeholder="10-digit mobile number"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
               />
             </div>
 
@@ -204,7 +216,7 @@ export function EntryPage() {
                 placeholder="e.g. Helmet kept on bike, scratch on door"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
               />
             </div>
           </div>
@@ -214,13 +226,13 @@ export function EntryPage() {
             <button
               type="submit"
               disabled={loading || !vehicleNumber}
-              className="w-full py-3.5 px-6 bg-[#142B4A] hover:bg-[#2457A7] text-white font-extrabold text-sm rounded-2xl shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full min-h-[52px] py-4 px-6 bg-[#142B4A] hover:bg-[#2457A7] text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99]"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <PlusCircle className="w-5 h-5 text-emerald-400" />
+                  <PlusCircle className="w-5 h-5 text-emerald-400 shrink-0" />
                   <span>Generate Entry Token & Print Slip</span>
                 </>
               )}

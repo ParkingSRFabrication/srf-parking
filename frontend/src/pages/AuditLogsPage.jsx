@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { api, getErrorMessage } from '../services/api.js';
 import { formatDateTime } from '../utils/formatters.js';
+import './AuditLogsPage.css';
 
 export function AuditLogsPage() {
   const [logs, setLogs] = useState([]);
@@ -147,7 +148,48 @@ export function AuditLogsPage() {
 
       {/* Logs Table Card */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile View: Audit Log Cards (< md) */}
+        <div className="block md:hidden divide-y divide-slate-100">
+          {loading ? (
+            <div className="py-12 text-center text-slate-400 text-xs">
+              <div className="w-6 h-6 border-2 border-slate-300 border-t-[#142B4A] rounded-full animate-spin mx-auto mb-2" />
+              <span>Loading audit records...</span>
+            </div>
+          ) : logs.length > 0 ? (
+            logs.map(log => (
+              <div key={log._id} className="p-3.5 hover:bg-slate-50 transition space-y-1.5 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                    log.action.includes('FAILED') || log.action.includes('CANCELLED')
+                      ? 'bg-rose-100 text-rose-800'
+                      : log.action.includes('CREATED') || log.action.includes('SUCCESS')
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {log.action}
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-mono">{formatDateTime(log.createdAt)}</span>
+                </div>
+                <div className="flex items-center justify-between text-slate-700">
+                  <span>By: <strong>{log.actorName}</strong> ({log.actorRole})</span>
+                  <span className="font-mono text-slate-500">{log.entityType}</span>
+                </div>
+                {log.details && Object.keys(log.details).length > 0 && (
+                  <div className="text-[11px] text-slate-500 font-mono bg-slate-50 p-1.5 rounded truncate">
+                    {JSON.stringify(log.details)}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="py-12 text-center text-slate-400 text-xs">
+              No audit log events match your filter.
+            </div>
+          )}
+        </div>
+
+        {/* Desktop View: Full Table (>= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">

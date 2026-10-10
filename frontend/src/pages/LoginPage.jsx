@@ -4,6 +4,7 @@ import { Lock, User, Eye, EyeOff, ShieldCheck, KeyRound, AlertCircle } from 'luc
 import { useAuth } from '../context/AuthContext.jsx';
 import { BrandLogo } from '../components/common/BrandLogo.jsx';
 import { getErrorMessage } from '../services/api.js';
+import './LoginPage.css';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -62,20 +63,20 @@ export function LoginPage() {
       {/* Main Card */}
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 relative z-10">
         {/* Header Banner */}
-        <div className="bg-[#142B4A] p-8 text-center text-white relative">
-          <div className="flex justify-center mb-3">
+        <div className="bg-[#142B4A] p-6 sm:p-8 text-center text-white relative">
+          <div className="flex justify-center mb-2 sm:mb-3">
             <BrandLogo size="large" inverted={true} />
           </div>
-          <div className="text-xs text-blue-200 mt-2 font-medium">
+          <div className="text-xs text-blue-200 mt-1 font-medium">
             Authorized Railway Operator & Admin Portal
           </div>
         </div>
 
         {/* Form Container */}
-        <div className="p-6 sm:p-8">
+        <div className="p-4 sm:p-8">
           {/* Expired Session Notice */}
           {isExpired && (
-            <div className="mb-5 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs flex items-center gap-2">
+            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
               <span>Your session has expired. Please sign in again.</span>
             </div>
@@ -83,18 +84,18 @@ export function LoginPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-5 p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-start gap-2.5">
+            <div className="mb-4 p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
               <span className="font-medium">{error}</span>
             </div>
           )}
 
           {/* Mode Switch Tabs (Password vs 4-Digit MPIN) */}
-          <div className="flex p-1 bg-slate-100 rounded-xl mb-6">
+          <div className="flex p-1 bg-slate-100 rounded-xl mb-5">
             <button
               type="button"
               onClick={() => { setAuthMode('password'); setError(null); }}
-              className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${
+              className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition ${
                 authMode === 'password'
                   ? 'bg-white text-[#142B4A] shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -105,7 +106,7 @@ export function LoginPage() {
             <button
               type="button"
               onClick={() => { setAuthMode('mpin'); setError(null); }}
-              className={`flex-1 py-2 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 ${
                 authMode === 'mpin'
                   ? 'bg-white text-[#142B4A] shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -130,7 +131,7 @@ export function LoginPage() {
                   placeholder="e.g. admin or OP-001"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2457A7] focus:bg-white transition"
+                  className="w-full pl-10 pr-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2457A7] focus:bg-white transition"
                 />
               </div>
             </div>
@@ -149,7 +150,7 @@ export function LoginPage() {
                     placeholder="Enter account password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2457A7] focus:bg-white transition"
+                    className="w-full pl-10 pr-10 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2457A7] focus:bg-white transition"
                   />
                   <button
                     type="button"
@@ -169,13 +170,14 @@ export function LoginPage() {
                   <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="password"
+                    inputMode="numeric"
                     maxLength={4}
                     pattern="\d{4}"
                     required
                     placeholder="••••"
                     value={mpin}
                     onChange={(e) => setMpin(e.target.value.replace(/\D/g, ''))}
-                    className="w-full pl-10 pr-4 py-2.5 text-sm tracking-widest font-mono text-center bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2457A7] focus:bg-white transition text-lg"
+                    className="w-full pl-10 pr-4 py-3 text-sm tracking-widest font-mono text-center bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2457A7] focus:bg-white transition text-lg"
                   />
                 </div>
                 <p className="text-[10px] text-slate-500 mt-1">
@@ -188,7 +190,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-[#142B4A] hover:bg-[#2457A7] text-white font-bold rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
+              className="w-full min-h-[50px] py-3.5 px-4 bg-[#142B4A] hover:bg-[#2457A7] active:scale-[0.99] text-white font-bold rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

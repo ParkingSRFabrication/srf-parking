@@ -13,13 +13,15 @@ import {
   Users,
   Settings,
   ShieldAlert,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { BrandLogo } from '../common/BrandLogo.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
+import './Sidebar.css';
 
 export function Sidebar({ isOpen, onClose }) {
-  const { isAdmin } = useAuth();
+  const { isAdmin, logout } = useAuth();
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -133,13 +135,25 @@ export function Sidebar({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* Footer info */}
-        <div className="p-4 border-t border-blue-900/40 text-center">
-          <div className="text-[10px] text-blue-300 font-medium">
-            SR FABRICATION • RAILWAY STATION
-          </div>
-          <div className="text-[9px] text-blue-400/80 font-mono mt-0.5">
-            Production v1.0.0
+        {/* Footer info & Mobile Logout */}
+        <div className="p-4 border-t border-blue-900/40 text-center space-y-3">
+          <button
+            onClick={() => {
+              onClose();
+              logout();
+            }}
+            className="w-full lg:hidden flex items-center justify-center gap-2 py-2.5 px-3 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-xl text-xs font-bold transition border border-rose-500/30"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out Session</span>
+          </button>
+          <div>
+            <div className="text-[10px] text-blue-300 font-medium">
+              SR FABRICATION • RAILWAY STATION
+            </div>
+            <div className="text-[9px] text-blue-400/80 font-mono mt-0.5">
+              Production v1.0.0
+            </div>
           </div>
         </div>
       </aside>

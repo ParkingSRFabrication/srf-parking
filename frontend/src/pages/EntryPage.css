@@ -1,0 +1,53 @@
+/* EntryPage Styles */
+.entry-page-wrapper {
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Vehicle category selection tile */
+.vehicle-category-tile {
+  position: relative;
+  border-radius: 1rem;
+  border: 1px solid #E2E8F0;
+  padding: 0.875rem;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 4.5rem;
+  user-select: none;
+  cursor: pointer;
+}
+
+.vehicle-category-tile:hover {
+  border-color: #CBD5E1;
+  background-color: #F8FAFC;
+}
+
+.vehicle-category-tile.selected {
+  border-color: #2457A7;
+  background-color: rgba(239, 246, 255, 0.85);
+  box-shadow: 0 0 0 2px rgba(36, 87, 167, 0.2);
+}
+
+.vehicle-plate-input {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Shake animation for duplicate alert */
+@keyframes shakeAlert {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shakeAlert 0.4s ease-in-out;
+}

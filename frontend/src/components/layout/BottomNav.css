@@ -1,0 +1,34 @@
+/* BottomNav Dedicated Mobile Styles */
+
+.bottom-nav-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid #E2E8F0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-item:active {
+  transform: scale(0.92);
+}
+
+.bottom-nav-badge {
+  position: absolute;
+  top: 2px;
+  right: 10px;
+}

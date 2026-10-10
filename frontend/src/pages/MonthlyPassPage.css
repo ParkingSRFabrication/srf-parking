@@ -1,0 +1,37 @@
+/* MonthlyPassPage Styles */
+.monthly-pass-container {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Duration options */
+.pass-duration-card {
+  padding: 0.875rem 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid #E2E8F0;
+  text-align: center;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  background-color: #FFFFFF;
+}
+
+.pass-duration-card:hover {
+  border-color: #CBD5E1;
+  background-color: #F8FAFC;
+}
+
+.pass-duration-card.selected {
+  border-color: #2457A7;
+  background-color: rgba(239, 246, 255, 0.85);
+  box-shadow: 0 0 0 2px rgba(36, 87, 167, 0.2);
+}
+
+.pass-amount-highlight {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  color: #142B4A;
+}

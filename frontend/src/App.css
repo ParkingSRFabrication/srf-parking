@@ -1,0 +1,12 @@
+/* App Root Styles */
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-root-shell {
+  min-height: 100vh;
+  width: 100%;
+}

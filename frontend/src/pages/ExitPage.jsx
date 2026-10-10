@@ -22,6 +22,7 @@ import {
 } from '../utils/formatters.js';
 import { QRScannerModal } from '../components/common/QRScannerModal.jsx';
 import { ReceiptModal } from '../components/common/ReceiptModal.jsx';
+import './ExitPage.css';
 
 export function ExitPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -116,7 +117,7 @@ export function ExitPage() {
       </div>
 
       {/* Lookup Card */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-8">
         <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
           Find Parking Session
         </label>
@@ -125,35 +126,47 @@ export function ExitPage() {
             <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Enter Token Number (e.g. SRF-...) or Vehicle Reg (e.g. MH12AB1234)"
+              placeholder="Token (SRF-...) or Vehicle Reg (MH12...)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value.toUpperCase())}
               onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
-              className="w-full pl-12 pr-4 py-3 text-sm font-mono font-bold uppercase bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+              className="w-full pl-12 pr-10 py-3.5 text-base sm:text-lg font-mono font-bold uppercase bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-200"
+                aria-label="Clear query"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
-          <button
-            type="button"
-            onClick={() => handleLookup()}
-            disabled={searching || !searchQuery.trim()}
-            className="px-6 py-3 bg-[#142B4A] hover:bg-[#2457A7] text-white font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 shadow-md"
-          >
-            {searching ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <span>Lookup Session</span>
-            )}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => handleLookup()}
+              disabled={searching || !searchQuery.trim()}
+              className="flex-1 sm:flex-none px-6 py-3.5 bg-[#142B4A] hover:bg-[#2457A7] text-white font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 shadow-md min-h-[48px]"
+            >
+              {searching ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <span>Lookup</span>
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setShowScanner(true)}
-            className="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm border border-slate-200"
-          >
-            <Camera className="w-4 h-4 text-[#2457A7]" />
-            <span className="hidden sm:inline">Scan QR</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setShowScanner(true)}
+              className="px-4 py-3.5 bg-blue-50 hover:bg-blue-100 text-[#2457A7] font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm border border-blue-200 min-h-[48px]"
+            >
+              <Camera className="w-5 h-5 text-[#2457A7]" />
+              <span className="text-xs">Scan QR</span>
+            </button>
+          </div>
         </div>
 
         {searchError && (
@@ -266,15 +279,15 @@ export function ExitPage() {
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                     Select Payment Method
                   </label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-4 sm:flex gap-2">
                     {['CASH', 'UPI', 'CARD', 'OTHER'].map((method) => (
                       <button
                         key={method}
                         type="button"
                         onClick={() => setPaymentMethod(method)}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition border ${
+                        className={`min-h-[44px] px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition border text-center active:scale-[0.98] ${
                           paymentMethod === method
-                            ? 'bg-[#142B4A] text-white border-[#142B4A] shadow-sm'
+                            ? 'bg-[#142B4A] text-white border-[#142B4A] shadow-md ring-2 ring-blue-900/20'
                             : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
                         }`}
                       >
@@ -290,7 +303,7 @@ export function ExitPage() {
                         placeholder="UPI UTR / Reference No. (Optional)"
                         value={paymentReference}
                         onChange={(e) => setPaymentReference(e.target.value)}
-                        className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#2457A7]"
+                        className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-[#2457A7]"
                       />
                     </div>
                   )}
@@ -311,13 +324,13 @@ export function ExitPage() {
                 type="button"
                 onClick={handleProcessExit}
                 disabled={processingExit}
-                className="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-2xl shadow-xl transition flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full min-h-[56px] py-4 px-6 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-xl transition flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {processingExit ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    <CheckCircle className="w-5 h-5 text-white" />
+                    <CheckCircle className="w-5 h-5 text-white shrink-0" />
                     <span>
                       Collect {formatCurrency(liveCharge.amountToPay)} & Complete Vehicle Exit
                     </span>

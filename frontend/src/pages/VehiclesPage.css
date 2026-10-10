@@ -1,0 +1,29 @@
+/* VehiclesPage Dedicated Styles */
+
+.vehicles-page {
+  width: 100%;
+}
+
+.vehicle-search-card {
+  background-color: #FFFFFF;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.vehicle-reg-plate {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vehicle-history-timeline {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .vehicle-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}

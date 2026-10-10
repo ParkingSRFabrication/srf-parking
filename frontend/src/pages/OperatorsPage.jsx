@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { api, getErrorMessage } from '../services/api.js';
 import { formatDateTime } from '../utils/formatters.js';
+import './OperatorsPage.css';
 
 export function OperatorsPage() {
   const [operators, setOperators] = useState([]);
@@ -128,7 +129,44 @@ export function OperatorsPage() {
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile View: Operator Cards (< md) */}
+        <div className="block md:hidden divide-y divide-slate-100">
+          {operators.map(op => (
+            <div key={op._id} className="p-3.5 hover:bg-slate-50 transition space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-slate-900 text-sm">{op.name}</div>
+                  <div className="text-[11px] font-mono text-slate-500">ID: {op.operatorId} • @{op.username}</div>
+                </div>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold capitalize ${
+                  op.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                }`}>
+                  {op.role}
+                </span>
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-slate-50">
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  op.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                }`}>
+                  {op.isActive ? 'ACTIVE' : 'DEACTIVATED'}
+                </span>
+                <button
+                  onClick={() => handleToggleStatus(op)}
+                  className={`px-3 py-1.5 text-[11px] font-bold rounded-xl transition ${
+                    op.isActive
+                      ? 'text-rose-600 hover:bg-rose-50 border border-rose-200'
+                      : 'text-emerald-600 hover:bg-emerald-50 border border-emerald-200'
+                  }`}
+                >
+                  {op.isActive ? 'Deactivate' : 'Activate'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop View: Full Table (>= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">

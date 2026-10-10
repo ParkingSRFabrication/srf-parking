@@ -1,0 +1,32 @@
+/* TokensPage Dedicated Styles */
+
+.tokens-page {
+  width: 100%;
+}
+
+.token-table-cell-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+  color: #142B4A;
+}
+
+.token-mobile-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.token-mobile-card:active {
+  transform: scale(0.99);
+}
+
+.token-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .tokens-pagination-compact {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
