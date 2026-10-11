@@ -5,12 +5,15 @@
 }
 
 .token-table-cell-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  color: #142B4A;
+  color: #38BDF8;
 }
 
 .token-mobile-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 

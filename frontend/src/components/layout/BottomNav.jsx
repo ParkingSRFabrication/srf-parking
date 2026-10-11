@@ -12,81 +12,75 @@ import './BottomNav.css';
 export function BottomNav({ onOpenMenu }) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.06)] safe-bottom no-print"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-[#0B1120]/95 backdrop-blur-xl border-t border-white/10 lg:hidden shadow-[0_-4px_25px_rgba(0,0,0,0.5)] safe-bottom no-print"
       aria-label="Mobile Navigation"
     >
-      <div className="flex items-center justify-around px-2 py-1.5 max-w-lg mx-auto">
+      <div className="flex items-center justify-around px-2 py-1 max-w-lg mx-auto">
         {/* Dashboard */}
         <NavLink
           to="/dashboard"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition min-w-[54px] ${
+            `flex flex-col items-center justify-center py-1.5 px-2 rounded-xl transition min-w-[56px] ${
               isActive
-                ? 'text-[#2457A7] font-bold'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'text-cyan-400 font-bold'
+                : 'text-slate-400 hover:text-white'
             }`
           }
         >
           {({ isActive }) => (
             <>
-              <div className={`p-1 rounded-lg ${isActive ? 'bg-blue-50' : ''}`}>
+              <div className={`p-1 rounded-lg ${isActive ? 'bg-indigo-600/20 text-cyan-400' : ''}`}>
                 <LayoutDashboard className="w-5 h-5" />
               </div>
-              <span className="text-[10px] mt-0.5 tracking-tight">Home</span>
+              <span className="text-[10px] tracking-tight font-medium">Home</span>
             </>
           )}
         </NavLink>
 
-        {/* Fast Entry (Elevated/Highlighted) */}
+        {/* Fast Entry (Elevated/Highlighted Button) */}
         <NavLink
           to="/entry"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition min-w-[54px] ${
+            `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition min-w-[58px] -mt-3.5 ${
               isActive
-                ? 'text-emerald-700 font-bold'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'text-emerald-300 font-bold'
+                : 'text-slate-300'
             }`
           }
         >
           {({ isActive }) => (
             <>
               <div
-                className={`p-1 rounded-lg ${
+                className={`p-2.5 rounded-2xl shadow-glowEmerald transition transform active:scale-90 ${
                   isActive
-                    ? 'bg-emerald-100 text-emerald-700 shadow-xs'
-                    : 'text-slate-600'
+                    ? 'bg-gradient-to-tr from-emerald-500 to-teal-400 text-white'
+                    : 'bg-emerald-600 text-white'
                 }`}
               >
                 <ArrowDownRight className="w-5 h-5" />
               </div>
-              <span className="text-[10px] mt-0.5 tracking-tight">Entry</span>
+              <span className="text-[10px] mt-1 tracking-tight font-bold text-emerald-400">Entry</span>
             </>
           )}
         </NavLink>
 
-        {/* Fast Exit (Elevated/Highlighted) */}
+        {/* Fast Exit */}
         <NavLink
           to="/exit"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition min-w-[54px] ${
+            `flex flex-col items-center justify-center py-1.5 px-2 rounded-xl transition min-w-[56px] ${
               isActive
-                ? 'text-[#2457A7] font-bold'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'text-indigo-400 font-bold'
+                : 'text-slate-400 hover:text-white'
             }`
           }
         >
           {({ isActive }) => (
             <>
-              <div
-                className={`p-1 rounded-lg ${
-                  isActive
-                    ? 'bg-blue-100 text-[#2457A7] shadow-xs'
-                    : 'text-slate-600'
-                }`}
-              >
+              <div className={`p-1 rounded-lg ${isActive ? 'bg-indigo-600/20 text-indigo-400' : ''}`}>
                 <ArrowUpRight className="w-5 h-5" />
               </div>
-              <span className="text-[10px] mt-0.5 tracking-tight">Exit</span>
+              <span className="text-[10px] tracking-tight font-medium">Exit</span>
             </>
           )}
         </NavLink>
@@ -95,19 +89,19 @@ export function BottomNav({ onOpenMenu }) {
         <NavLink
           to="/passes"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition min-w-[54px] ${
+            `flex flex-col items-center justify-center py-1.5 px-2 rounded-xl transition min-w-[56px] ${
               isActive
-                ? 'text-purple-700 font-bold'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'text-purple-400 font-bold'
+                : 'text-slate-400 hover:text-white'
             }`
           }
         >
           {({ isActive }) => (
             <>
-              <div className={`p-1 rounded-lg ${isActive ? 'bg-purple-50' : ''}`}>
+              <div className={`p-1 rounded-lg ${isActive ? 'bg-purple-600/20 text-purple-400' : ''}`}>
                 <CreditCard className="w-5 h-5" />
               </div>
-              <span className="text-[10px] mt-0.5 tracking-tight">Passes</span>
+              <span className="text-[10px] tracking-tight font-medium">Passes</span>
             </>
           )}
         </NavLink>
@@ -116,13 +110,13 @@ export function BottomNav({ onOpenMenu }) {
         <button
           type="button"
           onClick={onOpenMenu}
-          className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-slate-500 hover:text-slate-800 transition min-w-[54px]"
+          className="flex flex-col items-center justify-center py-1.5 px-2 rounded-xl text-slate-400 hover:text-white transition min-w-[56px]"
           aria-label="Open More Menu"
         >
           <div className="p-1 rounded-lg">
             <Menu className="w-5 h-5" />
           </div>
-          <span className="text-[10px] mt-0.5 tracking-tight">Menu</span>
+          <span className="text-[10px] tracking-tight font-medium">Menu</span>
         </button>
       </div>
     </nav>

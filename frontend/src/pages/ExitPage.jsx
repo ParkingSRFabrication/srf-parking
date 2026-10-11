@@ -10,7 +10,9 @@ import {
   Printer,
   ShieldCheck,
   Check,
-  Wallet
+  Wallet,
+  Zap,
+  ArrowRight
 } from 'lucide-react';
 import { api, getErrorMessage } from '../services/api.js';
 import {
@@ -105,38 +107,42 @@ export function ExitPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in text-slate-100">
       {/* Page Title */}
       <div>
-        <h1 className="text-2xl font-black text-[#142B4A] tracking-tight">
-          Vehicle Exit & Payment Processing
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[11px] font-bold text-cyan-400 mb-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span>VEHICLE CHECK-OUT • BARRIER GATE EXIT</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-black font-outfit text-white tracking-tight">
+          Vehicle Exit & Fee Settlement
         </h1>
-        <p className="text-xs text-slate-500 mt-0.5">
-          Scan QR code or enter token / vehicle registration number to calculate parking charges
+        <p className="text-xs text-slate-400 mt-0.5">
+          Scan QR barcode or enter token / vehicle plate to calculate parking duration and charges
         </p>
       </div>
 
       {/* Lookup Card */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-8">
-        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-          Find Parking Session
+      <div className="glass-panel rounded-3xl border border-white/10 p-5 sm:p-7 space-y-3">
+        <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider font-mono">
+          Find Active Parking Session
         </label>
         <div className="flex flex-col sm:flex-row gap-2.5">
           <div className="relative flex-1">
             <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Token (SRF-...) or Vehicle Reg (MH12...)"
+              placeholder="Scan Barcode / Token (SRF-...) or Plate (MH12...)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value.toUpperCase())}
               onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
-              className="w-full pl-12 pr-10 py-3.5 text-base sm:text-lg font-mono font-bold uppercase bg-slate-50 border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+              className="w-full pl-12 pr-10 py-3.5 text-base sm:text-lg font-mono font-black uppercase bg-slate-950 border-2 border-white/10 rounded-2xl text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-200"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition"
                 aria-label="Clear query"
               >
                 ✕
@@ -149,7 +155,7 @@ export function ExitPage() {
               type="button"
               onClick={() => handleLookup()}
               disabled={searching || !searchQuery.trim()}
-              className="flex-1 sm:flex-none px-6 py-3.5 bg-[#142B4A] hover:bg-[#2457A7] text-white font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 shadow-md min-h-[48px]"
+              className="flex-1 sm:flex-none px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 shadow-glow min-h-[48px]"
             >
               {searching ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -161,17 +167,17 @@ export function ExitPage() {
             <button
               type="button"
               onClick={() => setShowScanner(true)}
-              className="px-4 py-3.5 bg-blue-50 hover:bg-blue-100 text-[#2457A7] font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm border border-blue-200 min-h-[48px]"
+              className="px-4 py-3.5 bg-slate-900 hover:bg-slate-800 text-cyan-300 font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm border border-cyan-500/30 min-h-[48px]"
             >
-              <Camera className="w-5 h-5 text-[#2457A7]" />
-              <span className="text-xs">Scan QR</span>
+              <Camera className="w-5 h-5 text-cyan-400" />
+              <span className="text-xs">Camera Scan</span>
             </button>
           </div>
         </div>
 
         {searchError && (
-          <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+          <div className="mt-3 p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-300 text-xs font-semibold flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
             <span>{searchError}</span>
           </div>
         )}
@@ -179,77 +185,77 @@ export function ExitPage() {
 
       {/* Active Session Billing Details Card */}
       {activeSession && liveCharge && (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden animate-slide-up">
+        <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden animate-slide-up">
           {/* Header */}
-          <div className="bg-[#142B4A] p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="bg-[#142B4A] p-5 sm:p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10">
             <div>
-              <div className="text-xs text-blue-300 font-mono font-semibold uppercase">
+              <div className="text-xs text-cyan-300 font-mono font-semibold uppercase">
                 Active Session Found
               </div>
-              <div className="text-xl font-mono font-black text-white mt-0.5">
+              <div className="text-xl sm:text-2xl font-mono font-black text-white mt-0.5">
                 {activeSession.tokenNumber}
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="bg-white/10 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider">
+              <span className="bg-white/10 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider text-cyan-300 border border-white/10">
                 {activeSession.vehicleNumber}
               </span>
-              <span className="bg-blue-600/60 px-3 py-1 rounded-full text-xs font-semibold capitalize">
+              <span className="bg-indigo-600/80 px-3 py-1 rounded-full text-xs font-semibold capitalize">
                 {CATEGORY_LABELS[activeSession.vehicleType] || activeSession.vehicleType}
               </span>
             </div>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-6">
+          <div className="p-5 sm:p-8 space-y-6">
             {/* Tariff & Timing Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-white/5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
                   Entry Time
                 </span>
-                <span className="font-semibold text-xs text-slate-800 mt-1 block">
+                <span className="font-semibold text-xs text-white mt-1 block">
                   {formatDateTime(activeSession.entryTime)}
                 </span>
               </div>
 
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Total Duration
+              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-white/5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
+                  Duration
                 </span>
-                <span className="font-bold text-xs text-[#2457A7] mt-1 block">
+                <span className="font-bold text-xs text-cyan-400 mt-1 block">
                   {formatDuration(liveCharge.durationMinutes)}
                 </span>
               </div>
 
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Billable Days
+              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-white/5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
+                  Billable Units
                 </span>
-                <span className="font-bold text-xs text-slate-800 mt-1 block">
-                  {liveCharge.billableUnits} Day(s) (24h slabs)
+                <span className="font-bold text-xs text-white mt-1 block">
+                  {liveCharge.billableUnits} Slab(s)
                 </span>
               </div>
 
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-white/5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
                   Rate Policy
                 </span>
-                <span className="font-semibold text-xs text-slate-800 mt-1 block">
-                  ₹{liveCharge.firstSlabAmount} + ₹{liveCharge.additionalDayAmount}/day
+                <span className="font-semibold text-xs text-emerald-400 mt-1 block">
+                  ₹{liveCharge.firstSlabAmount} + ₹{liveCharge.additionalDayAmount}/slab
                 </span>
               </div>
             </div>
 
             {/* Monthly Pass Coverage Banner */}
             {liveCharge.isCoveredByPass && (
-              <div className="p-4 bg-purple-50 border-2 border-purple-200 rounded-2xl flex items-center gap-3">
-                <ShieldCheck className="w-6 h-6 text-purple-600 shrink-0" />
+              <div className="p-4 bg-purple-500/15 border border-purple-500/30 rounded-2xl flex items-center gap-3">
+                <ShieldCheck className="w-6 h-6 text-purple-400 shrink-0" />
                 <div className="text-xs">
-                  <div className="font-bold text-sm text-purple-900">
+                  <div className="font-bold text-sm text-purple-200">
                     Active Monthly Pass Holder
                   </div>
-                  <div className="text-purple-700 mt-0.5">
+                  <div className="text-purple-300 mt-0.5">
                     Pass: <strong>{liveCharge.passDetails?.passNumber}</strong> (Customer: {liveCharge.passDetails?.customerName}).
                     Parking fee is fully exempt (₹0).
                   </div>
@@ -258,16 +264,16 @@ export function ExitPage() {
             )}
 
             {/* Calculated Fee Highlight Box */}
-            <div className="p-6 bg-slate-50 rounded-2xl border-2 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-5 sm:p-6 bg-slate-950 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block font-mono">
                   Total Parking Fee Payable
                 </span>
-                <div className="text-3xl font-black text-[#142B4A] mt-1">
+                <div className="text-3xl font-black font-mono text-emerald-400 mt-1">
                   {formatCurrency(liveCharge.amountToPay)}
                 </div>
                 {liveCharge.isGracePeriod && (
-                  <span className="text-xs text-emerald-600 font-semibold">
+                  <span className="text-xs text-cyan-400 font-semibold">
                     Within free grace period
                   </span>
                 )}
@@ -276,7 +282,7 @@ export function ExitPage() {
               {/* Payment Method Selector */}
               {!liveCharge.isCoveredByPass && liveCharge.amountToPay > 0 && (
                 <div className="w-full sm:w-auto">
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 font-mono">
                     Select Payment Method
                   </label>
                   <div className="grid grid-cols-4 sm:flex gap-2">
@@ -285,10 +291,10 @@ export function ExitPage() {
                         key={method}
                         type="button"
                         onClick={() => setPaymentMethod(method)}
-                        className={`min-h-[44px] px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition border text-center active:scale-[0.98] ${
+                        className={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition border text-center ${
                           paymentMethod === method
-                            ? 'bg-[#142B4A] text-white border-[#142B4A] shadow-md ring-2 ring-blue-900/20'
-                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+                            ? 'bg-indigo-600 text-white border-indigo-500 shadow-glow'
+                            : 'bg-slate-900 text-slate-300 border-white/10 hover:bg-slate-800'
                         }`}
                       >
                         {method}
@@ -300,10 +306,10 @@ export function ExitPage() {
                     <div className="mt-3">
                       <input
                         type="text"
-                        placeholder="UPI UTR / Reference No. (Optional)"
+                        placeholder="UPI Transaction ID / UTR (Optional)"
                         value={paymentReference}
                         onChange={(e) => setPaymentReference(e.target.value)}
-                        className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-[#2457A7]"
+                        className="w-full px-3 py-2 text-xs bg-slate-900 border border-white/10 rounded-xl text-white focus:outline-none focus:border-cyan-400"
                       />
                     </div>
                   )}
@@ -312,8 +318,8 @@ export function ExitPage() {
             </div>
 
             {exitError && (
-              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-300 text-xs font-semibold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
                 <span>{exitError}</span>
               </div>
             )}
@@ -324,7 +330,7 @@ export function ExitPage() {
                 type="button"
                 onClick={handleProcessExit}
                 disabled={processingExit}
-                className="w-full min-h-[56px] py-4 px-6 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-xl transition flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full min-h-[56px] py-4 px-6 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-glowEmerald transition flex items-center justify-center gap-2 disabled:opacity-50 transform active:scale-[0.99]"
               >
                 {processingExit ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

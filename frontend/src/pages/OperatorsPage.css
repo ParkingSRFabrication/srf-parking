@@ -5,25 +5,27 @@
 }
 
 .operator-badge-admin {
-  background-color: #FEF3C7;
-  color: #92400E;
-  border: 1px solid #FDE68A;
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #FCD34D;
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .operator-badge-staff {
-  background-color: #DBEAFE;
-  color: #1E40AF;
-  border: 1px solid #BFDBFE;
+  background-color: rgba(99, 102, 241, 0.2);
+  color: #A5B4FC;
+  border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
 .operator-modal-backdrop {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 @media (max-width: 640px) {
   .operator-card-item {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .operator-card-item:active {
     transform: scale(0.99);

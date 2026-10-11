@@ -1,5 +1,4 @@
 import React from 'react';
-import './BrandLogo.css';
 
 export function BrandLogo({ size = 'default', showSubtitle = true, inverted = false }) {
   const isLarge = size === 'large';
@@ -8,28 +7,31 @@ export function BrandLogo({ size = 'default', showSubtitle = true, inverted = fa
   return (
     <div className="flex items-center gap-3 select-none">
       {/* Brand Icon Mark */}
-      <div className={`relative flex items-center justify-center rounded-xl font-black shadow-md transition-transform hover:scale-105 ${
-        isLarge ? 'w-12 h-12 text-2xl' : isSmall ? 'w-8 h-8 text-sm' : 'w-10 h-10 text-lg'
-      } ${
-        inverted ? 'bg-white text-[#142B4A]' : 'bg-[#142B4A] text-white border border-blue-900/40'
-      }`}>
-        <span className="tracking-tighter">SR</span>
-        {/* Accent Red Dot */}
-        <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#C9343A] rounded-full border-2 border-white shadow-sm" />
+      <div className={`relative flex items-center justify-center rounded-2xl font-black shadow-lg transition-transform hover:scale-105 shrink-0 ${
+        isLarge ? 'w-12 h-12 text-xl' : isSmall ? 'w-8 h-8 text-xs' : 'w-10 h-10 text-sm'
+      } bg-gradient-to-br from-indigo-500 via-blue-600 to-cyan-500 text-white shadow-indigo-500/25`}>
+        <span className="font-outfit font-black tracking-tight">SRF</span>
+        {/* Live Status indicator */}
+        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-slate-900"></span>
+        </span>
       </div>
 
       {/* Brand Typography */}
-      <div>
-        <div className={`font-extrabold tracking-tight leading-none ${
+      <div className="min-w-0">
+        <div className={`font-outfit font-black tracking-tight leading-none ${
           isLarge ? 'text-2xl' : isSmall ? 'text-base' : 'text-lg'
-        } ${inverted ? 'text-white' : 'text-[#142B4A]'}`}>
+        } ${inverted ? 'text-white' : 'text-slate-100'}`}>
           SR FABRICATION
         </div>
         {showSubtitle && (
-          <div className={`font-medium tracking-wide leading-tight mt-0.5 ${
-            isLarge ? 'text-xs' : 'text-[10px]'
-          } ${inverted ? 'text-blue-200' : 'text-slate-500'}`}>
-            RAILWAY PARKING MANAGEMENT SYSTEM
+          <div className={`font-mono uppercase tracking-wider leading-tight mt-1 truncate ${
+            isLarge ? 'text-[11px]' : 'text-[9px]'
+          } text-cyan-400 font-semibold flex items-center gap-1.5`}>
+            <span>RAILWAY PARKING MANAGEMENT SYSTEM</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-emerald-400">LIVE</span>
           </div>
         )}
       </div>

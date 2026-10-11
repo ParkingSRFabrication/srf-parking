@@ -1,0 +1,29 @@
+/* LandingPage Specific Animations and Transitions */
+.landing-root {
+  scroll-behavior: smooth;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Micro glow hover effects */
+.landing-card-glow {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.landing-card-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.2);
+}

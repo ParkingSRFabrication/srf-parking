@@ -19,13 +19,13 @@ export function ReceiptModal({ isOpen, onClose, data, type = 'entry' }) {
   const categoryName = CATEGORY_LABELS[data.vehicleType] || data.vehicleType || '-';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in no-print-bg">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in no-print-bg">
+      <div className="bg-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-white/10 max-h-[92vh] flex flex-col">
         {/* Modal Top Bar */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 bg-[#142B4A] text-white shrink-0 no-print">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 bg-[#142B4A] text-white shrink-0 no-print border-b border-white/10">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-emerald-400" />
-            <span className="font-semibold text-xs sm:text-sm tracking-wide">
+            <span className="font-bold text-xs sm:text-sm tracking-wide font-outfit">
               {isEntry ? 'Entry Token Generated' : isPass ? 'Monthly Pass Receipt' : 'Exit & Payment Receipt'}
             </span>
           </div>

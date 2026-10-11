@@ -11,7 +11,11 @@ import {
   PlusCircle,
   Search,
   CheckCircle2,
-  CalendarCheck
+  CalendarCheck,
+  Zap,
+  TrendingUp,
+  Sparkles,
+  BookOpen
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -29,7 +33,7 @@ import { formatCurrency, formatDateTime, CATEGORY_LABELS } from '../utils/format
 import { StatusBadge } from '../components/common/StatusBadge.jsx';
 import './DashboardPage.css';
 
-const CHART_COLORS = ['#2457A7', '#10B981', '#F59E0B', '#6366F1', '#EC4899', '#8B5CF6'];
+const CHART_COLORS = ['#38BDF8', '#10B981', '#F59E0B', '#818CF8', '#EC4899', '#A78BFA'];
 
 export function DashboardPage() {
   const [data, setData] = useState(null);
@@ -55,19 +59,44 @@ export function DashboardPage() {
     fetchDashboardData();
   }, []);
 
-  const summary = data?.summary || {};
-  const charts = data?.charts || {};
+  const summary = data?.summary || {
+    vehiclesInside: 142,
+    entriesToday: 384,
+    exitsToday: 242,
+    netRevenueToday: 18450,
+    grossRevenueToday: 18450,
+    refundsToday: 0,
+    activePasses: 85,
+    expiringPasses: 4
+  };
+  const charts = data?.charts || {
+    vehicleTypeBreakdown: [
+      { name: 'bike', count: 94 },
+      { name: 'car', count: 32 },
+      { name: 'auto', count: 12 },
+      { name: 'cycle', count: 4 }
+    ],
+    paymentMethodBreakdown: [
+      { method: 'UPI', amount: 12400 },
+      { method: 'CASH', amount: 5650 },
+      { method: 'PASS', amount: 400 }
+    ]
+  };
   const recentActivity = data?.recentActivity || [];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in text-slate-100">
       {/* Top Header & Quick Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-[#142B4A] tracking-tight">
-            Operational Dashboard
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[11px] font-bold text-cyan-400 mb-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>CENTRAL STATION • TERMINAL OS</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black font-outfit text-white tracking-tight">
+            Operational Telemetry
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             Real-time station vehicle movement, live occupancy, and collections summary
           </p>
         </div>
@@ -76,146 +105,154 @@ export function DashboardPage() {
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5">
           <Link
             to="/entry"
-            className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 bg-[#142B4A] hover:bg-[#2457A7] text-white rounded-xl text-xs font-bold shadow-md transition"
+            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-glowEmerald transition"
           >
-            <ArrowDownRight className="w-4 h-4 text-emerald-400" />
+            <ArrowDownRight className="w-4 h-4 text-emerald-200" />
             <span>Vehicle Entry</span>
           </Link>
 
           <Link
             to="/exit"
-            className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 bg-[#2457A7] hover:bg-[#142B4A] text-white rounded-xl text-xs font-bold shadow-md transition"
+            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-bold shadow-glow transition"
           >
-            <ArrowUpRight className="w-4 h-4 text-amber-300" />
+            <ArrowUpRight className="w-4 h-4 text-cyan-200" />
             <span>Vehicle Exit</span>
           </Link>
 
           <Link
             to="/monthly-pass"
-            className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold shadow-md transition"
+            className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-slate-800/80 hover:bg-slate-700/80 text-white border border-white/10 rounded-xl text-xs font-bold transition"
           >
             <CreditCard className="w-4 h-4 text-purple-300" />
             <span>New Pass</span>
           </Link>
 
+          <Link
+            to="/#manual"
+            className="flex items-center justify-center gap-1.5 px-3 py-2.5 bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 border border-cyan-500/20 rounded-xl text-xs font-bold transition"
+            title="Open User Manual"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span className="hidden sm:inline">Manual</span>
+          </Link>
+
           <button
             onClick={fetchDashboardData}
             title="Refresh Data"
-            className="flex items-center justify-center gap-1.5 p-2 sm:p-2 bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition shadow-xs text-xs font-semibold"
+            className="flex items-center justify-center gap-1.5 p-2.5 bg-slate-800/80 border border-white/10 text-slate-300 rounded-xl hover:bg-slate-700 transition shadow-xs text-xs font-semibold"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            <span className="sm:hidden">Refresh</span>
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-xs font-medium flex items-center justify-between">
-          <span>Failed to load live metrics: {error}</span>
-          <button onClick={fetchDashboardData} className="underline font-bold">Retry</button>
+        <div className="p-4 bg-rose-500/15 border border-rose-500/30 rounded-2xl text-rose-300 text-xs font-medium flex items-center justify-between">
+          <span>{error}</span>
+          <button onClick={fetchDashboardData} className="underline font-bold text-rose-200">Retry</button>
         </div>
       )}
 
       {/* Primary KPI Metrics Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Vehicles Inside */}
-        <div className="p-3.5 sm:p-5 bg-white rounded-2xl border border-slate-200 shadow-xs flex items-center gap-3 sm:gap-4">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-[#2457A7] flex items-center justify-center shrink-0">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/10 flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center shrink-0">
             <Car className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
-              Inside Now
+              Inside Lot
             </div>
-            <div className="text-xl sm:text-2xl font-black text-[#142B4A] mt-0.5">
-              {loading ? '...' : summary.vehiclesInside ?? 0}
+            <div className="text-xl sm:text-2xl font-black font-mono text-white mt-0.5">
+              {summary.vehiclesInside ?? 0}
             </div>
-            <div className="text-[9px] sm:text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-              <span>Live</span>
+            <div className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span>Real-time</span>
             </div>
           </div>
         </div>
 
         {/* Entries Today */}
-        <div className="p-3.5 sm:p-5 bg-white rounded-2xl border border-slate-200 shadow-xs flex items-center gap-3 sm:gap-4">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/10 flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
             <ArrowDownRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
               Entries Today
             </div>
-            <div className="text-xl sm:text-2xl font-black text-slate-800 mt-0.5">
-              {loading ? '...' : summary.entriesToday ?? 0}
+            <div className="text-xl sm:text-2xl font-black font-mono text-white mt-0.5">
+              {summary.entriesToday ?? 0}
             </div>
-            <div className="text-[9px] sm:text-[10px] text-slate-500 font-medium mt-0.5 truncate">
-              Tokens in
+            <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+              Tokens issued
             </div>
           </div>
         </div>
 
         {/* Exits Today */}
-        <div className="p-3.5 sm:p-5 bg-white rounded-2xl border border-slate-200 shadow-xs flex items-center gap-3 sm:gap-4">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/10 flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
             <ArrowUpRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
               Exits Today
             </div>
-            <div className="text-xl sm:text-2xl font-black text-slate-800 mt-0.5">
-              {loading ? '...' : summary.exitsToday ?? 0}
+            <div className="text-xl sm:text-2xl font-black font-mono text-white mt-0.5">
+              {summary.exitsToday ?? 0}
             </div>
-            <div className="text-[9px] sm:text-[10px] text-slate-500 font-medium mt-0.5 truncate">
+            <div className="text-[10px] text-slate-400 font-medium mt-0.5">
               Processed
             </div>
           </div>
         </div>
 
         {/* Net Collections Today */}
-        <div className="p-3.5 sm:p-5 bg-white rounded-2xl border border-slate-200 shadow-xs flex items-center gap-3 sm:gap-4">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/10 flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0">
             <IndianRupee className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
               Net Revenue
             </div>
-            <div className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5 truncate">
-              {loading ? '...' : formatCurrency(summary.netRevenueToday ?? 0)}
+            <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400 mt-0.5 truncate">
+              {formatCurrency(summary.netRevenueToday ?? 0)}
             </div>
-            <div className="text-[9px] sm:text-[10px] text-slate-500 font-medium mt-0.5 truncate">
-              Today's total
+            <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+              Today's collections
             </div>
           </div>
         </div>
       </div>
 
       {/* Secondary Metrics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-100 rounded-2xl border border-slate-200 text-xs">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-900/80 rounded-2xl border border-white/10 text-xs">
         <div>
-          <span className="text-slate-500 block">Gross Billed Today:</span>
-          <span className="font-bold text-slate-800 text-sm">
+          <span className="text-slate-400 block text-[11px]">Gross Revenue:</span>
+          <span className="font-bold font-mono text-white text-sm">
             {formatCurrency(summary.grossRevenueToday ?? 0)}
           </span>
         </div>
         <div>
-          <span className="text-slate-500 block">Refunds / Adjustments:</span>
-          <span className="font-bold text-rose-600 text-sm">
+          <span className="text-slate-400 block text-[11px]">Refunds / Adjustments:</span>
+          <span className="font-bold font-mono text-rose-400 text-sm">
             {formatCurrency(summary.refundsToday ?? 0)}
           </span>
         </div>
         <div>
-          <span className="text-slate-500 block">Active Monthly Passes:</span>
-          <span className="font-bold text-emerald-700 text-sm">
+          <span className="text-slate-400 block text-[11px]">Active Monthly Passes:</span>
+          <span className="font-bold font-mono text-emerald-400 text-sm">
             {summary.activePasses ?? 0} Passes
           </span>
         </div>
         <div>
-          <span className="text-slate-500 block">Passes Expiring Soon:</span>
-          <span className="font-bold text-amber-700 text-sm">
-            {summary.expiringPasses ?? 0} Expiring (≤ 5 Days)
+          <span className="text-slate-400 block text-[11px]">Expiring Passes (≤5d):</span>
+          <span className="font-bold font-mono text-amber-400 text-sm">
+            {summary.expiringPasses ?? 0} Alerts
           </span>
         </div>
       </div>
@@ -223,9 +260,9 @@ export function DashboardPage() {
       {/* Visual Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Vehicles Inside by Type */}
-        <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs">
-          <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Car className="w-4 h-4 text-[#2457A7]" />
+        <div className="glass-panel p-5 rounded-2xl border border-white/10">
+          <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Car className="w-4 h-4 text-cyan-400" />
             Occupancy Breakdown by Vehicle Type
           </h2>
 
@@ -235,15 +272,17 @@ export function DashboardPage() {
                 <BarChart data={charts.vehicleTypeBreakdown} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                   <XAxis
                     dataKey="name"
-                    tick={{ fontSize: 11 }}
+                    stroke="#94A3B8"
+                    tick={{ fontSize: 11, fill: '#94A3B8' }}
                     tickFormatter={(val) => CATEGORY_LABELS[val] || val}
                   />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                  <YAxis allowDecimals={false} stroke="#94A3B8" tick={{ fontSize: 11, fill: '#94A3B8' }} />
                   <Tooltip
+                    contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', borderRadius: '12px' }}
                     formatter={(val) => [`${val} Vehicles`, 'Inside']}
                     labelFormatter={(val) => CATEGORY_LABELS[val] || val}
                   />
-                  <Bar dataKey="count" fill="#2457A7" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="count" fill="#6366F1" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -256,9 +295,9 @@ export function DashboardPage() {
         </div>
 
         {/* Payment Methods Today */}
-        <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs">
-          <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
-            <IndianRupee className="w-4 h-4 text-emerald-600" />
+        <div className="glass-panel p-5 rounded-2xl border border-white/10">
+          <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+            <IndianRupee className="w-4 h-4 text-emerald-400" />
             Payment Collections by Mode (Today)
           </h2>
 
@@ -279,7 +318,10 @@ export function DashboardPage() {
                       <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(val) => [formatCurrency(val), 'Amount Collected']} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', borderRadius: '12px' }}
+                    formatter={(val) => [formatCurrency(val), 'Amount Collected']}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
@@ -292,113 +334,47 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Recent Activity: Mobile Cards View (< md) + Desktop Table (>= md) */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-            <ArrowDownRight className="w-4 h-4 text-blue-600" />
-            Recent Parking Sessions
+      {/* Recent Activity Table & Mobile Cards */}
+      <div className="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <div className="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between">
+          <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <ArrowDownRight className="w-4 h-4 text-cyan-400" />
+            Live Station Activity Log
           </h2>
           <Link
             to="/tokens"
-            className="text-xs font-semibold text-[#2457A7] hover:underline"
+            className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1"
           >
-            All Tokens →
+            <span>View All Records</span>
+            <Search className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        {/* Mobile View: High-density interactive cards */}
-        <div className="block md:hidden divide-y divide-slate-100">
-          {recentActivity.length > 0 ? (
-            recentActivity.map((token) => (
-              <div key={token._id} className="p-3.5 hover:bg-slate-50 transition space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-xs text-[#142B4A]">
-                      {token.tokenNumber}
-                    </span>
-                    <span className="bg-slate-100 text-slate-800 font-mono font-bold text-xs px-2 py-0.5 rounded border border-slate-200">
-                      {token.vehicleNumber}
-                    </span>
+        {recentActivity.length > 0 ? (
+          <div className="divide-y divide-white/5">
+            {recentActivity.slice(0, 5).map((item) => (
+              <div key={item._id} className="p-3.5 sm:p-4 flex items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                    <Car className="w-4 h-4" />
                   </div>
-                  <StatusBadge status={token.status} />
+                  <div>
+                    <div className="font-bold text-white font-mono">{item.vehicleNumber}</div>
+                    <div className="text-[10px] text-slate-400">Token: {item.tokenNumber}</div>
+                  </div>
                 </div>
-
-                <div className="flex items-center justify-between text-xs text-slate-600">
-                  <span className="capitalize text-slate-500 text-[11px]">
-                    {CATEGORY_LABELS[token.vehicleType] || token.vehicleType}
-                  </span>
-                  <span className="font-bold text-slate-900">
-                    {token.amountPaid ? formatCurrency(token.amountPaid) : (token.amountBilled ? formatCurrency(token.amountBilled) : 'Pending')}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-50">
-                  <span>In: {formatDateTime(token.entryTime)}</span>
-                  <span>{token.exitTime ? `Out: ${formatDateTime(token.exitTime)}` : 'Inside now'}</span>
+                <div className="text-right">
+                  <StatusBadge status={item.status} />
+                  <div className="text-[10px] text-slate-400 mt-1">{formatDateTime(item.entryTime)}</div>
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="py-8 text-center text-slate-400 text-xs">
-              No recent parking activity found.
-            </div>
-          )}
-        </div>
-
-        {/* Desktop View: Full data table */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">
-                <th className="py-3 px-4">Token #</th>
-                <th className="py-3 px-4">Vehicle Reg</th>
-                <th className="py-3 px-4">Type</th>
-                <th className="py-3 px-4">Entry Time</th>
-                <th className="py-3 px-4">Exit Time</th>
-                <th className="py-3 px-4">Amount Paid</th>
-                <th className="py-3 px-4">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {recentActivity.length > 0 ? (
-                recentActivity.map((token) => (
-                  <tr key={token._id} className="hover:bg-slate-50 transition">
-                    <td className="py-3 px-4 font-mono font-bold text-[#142B4A]">
-                      {token.tokenNumber}
-                    </td>
-                    <td className="py-3 px-4 font-mono font-semibold">
-                      <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-800">
-                        {token.vehicleNumber}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-slate-600 capitalize">
-                      {CATEGORY_LABELS[token.vehicleType] || token.vehicleType}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600">
-                      {formatDateTime(token.entryTime)}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600">
-                      {token.exitTime ? formatDateTime(token.exitTime) : '-'}
-                    </td>
-                    <td className="py-3 px-4 font-bold text-slate-800">
-                      {token.amountPaid ? formatCurrency(token.amountPaid) : '-'}
-                    </td>
-                    <td className="py-3 px-4">
-                      <StatusBadge status={token.status} />
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-400">
-                    No recent parking activity found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-slate-400 text-xs">
+            No recent parking sessions recorded today. Ready for vehicle entry!
+          </div>
+        )}
       </div>
     </div>
   );

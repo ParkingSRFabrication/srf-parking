@@ -42,6 +42,35 @@ export function AuthProvider({ children }) {
     throw new Error(res.data?.message || 'Login failed');
   };
 
+  const requestOtp = async (email) => {
+    const res = await api.post('/auth/request-otp', { email });
+    return res.data;
+  };
+
+  const verifyOtp = async ({ email, otp, name, role }) => {
+    const res = await api.post('/auth/verify-otp', { email, otp, name, role });
+    if (res.data?.success && res.data?.token) {
+      localStorage.setItem('srf_token', res.data.token);
+      localStorage.setItem('srf_user', JSON.stringify(res.data.user));
+      setToken(res.data.token);
+      setUser(res.data.user);
+      return res.data;
+    }
+    throw new Error(res.data?.message || 'Verification failed');
+  };
+
+  const loginWithGoogle = async (googleData) => {
+    const res = await api.post('/auth/google', googleData);
+    if (res.data?.success && res.data?.token) {
+      localStorage.setItem('srf_token', res.data.token);
+      localStorage.setItem('srf_user', JSON.stringify(res.data.user));
+      setToken(res.data.token);
+      setUser(res.data.user);
+      return res.data;
+    }
+    throw new Error(res.data?.message || 'Google authentication failed');
+  };
+
   const logout = async () => {
     try {
       if (token) {
@@ -64,7 +93,11 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
     isOperator: user?.role === 'operator',
+    isCommuter: user?.role === 'commuter',
     login,
+    requestOtp,
+    verifyOtp,
+    loginWithGoogle,
     logout
   };
 
