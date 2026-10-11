@@ -5,12 +5,15 @@
 }
 
 .report-stat-card {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .report-stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(20, 43, 74, 0.08);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.3);
 }
 
 .report-chart-container {

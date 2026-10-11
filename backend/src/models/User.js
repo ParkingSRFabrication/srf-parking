@@ -25,13 +25,25 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'operator'],
+    enum: ['admin', 'operator', 'commuter'],
     default: 'operator',
     index: true
   },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    sparse: true,
+    index: true
+  },
+  authProvider: {
+    type: String,
+    enum: ['local', 'google', 'otp'],
+    default: 'local'
+  },
   passwordHash: {
     type: String,
-    required: true
+    default: null
   },
   mpinHash: {
     type: String,

@@ -1,0 +1,1820 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+  ShieldCheck,
+  Smartphone,
+  Download,
+  BookOpen,
+  ArrowRight,
+  Sparkles,
+  Zap,
+  Clock,
+  Car,
+  Bike,
+  CheckCircle2,
+  ChevronRight,
+  QrCode,
+  CreditCard,
+  Printer,
+  KeyRound,
+  FileText,
+  HelpCircle,
+  Mail,
+  UserCheck,
+  AlertCircle,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Layers,
+  BarChart3,
+  Users,
+  Compass,
+  Laptop,
+  Check,
+  Share2,
+  Lock,
+  X
+} from 'lucide-react';
+import { BrandLogo } from '../components/common/BrandLogo.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { usePWAInstall } from '../utils/usePWAInstall.js';
+import { getErrorMessage } from '../services/api.js';
+import './LandingPage.css';
+
+export function LandingPage() {
+  const navigate = useNavigate();
+  const { user, isAuthenticated, login, requestOtp, verifyOtp, loginWithGoogle } = useAuth();
+  const { canInstall, isInstalled, isIOS, install } = usePWAInstall();
+
+  // Navigation & Active manual persona
+  const [activeManualTab, setActiveManualTab] = useState('operator'); // 'operator' | 'admin' | 'commuter' | 'hardware'
+  const [activeFaq, setActiveFaq] = useState(null);
+
+  // Auth Modal State
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authTab, setAuthTab] = useState('otp'); // 'otp' | 'google' | 'operator'
+  const [authSubmode, setAuthSubmode] = useState('login'); // 'login' | 'signup'
+
+  // Email OTP state
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [demoOtpCode, setDemoOtpCode] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [authError, setAuthError] = useState(null);
+  const [authSuccess, setAuthSuccess] = useState(null);
+
+  // Operator credentials state
+  const [operatorId, setOperatorId] = useState('');
+  const [password, setPassword] = useState('');
+  const [mpin, setMpin] = useState('');
+  const [operatorMode, setOperatorMode] = useState('password'); // 'password' | 'mpin'
+
+  // Google simulated account picker modal
+  const [googlePickerOpen, setGooglePickerOpen] = useState(false);
+
+  // iOS Install Instructions Modal
+  const [iosModalOpen, setIosModalOpen] = useState(false);
+
+  // Interactive Live Simulator State
+  const [simVehicleType, setSimVehicleType] = useState('bike');
+  const [simPlate, setSimPlate] = useState('MH 12 AB 8842');
+  const [simGeneratedToken, setSimGeneratedToken] = useState(null);
+
+  // Interactive Tariff Calculator State
+  const [calcVehicle, setCalcVehicle] = useState('bike');
+  const [calcDuration, setCalcDuration] = useState('4h');
+
+  // Handle Simulator Token Generation
+  const handleSimGenerateToken = (e) => {
+    e.preventDefault();
+    const tokenNo = `SRF-${Math.floor(100000 + Math.random() * 900000)}`;
+    const now = new Date();
+    setSimGeneratedToken({
+      tokenNumber: tokenNo,
+      vehicleNumber: simPlate.toUpperCase().trim(),
+      vehicleType: simVehicleType,
+      entryTime: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      date: now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      rateInfo: simVehicleType === 'bike' ? '₹20 / 4 hrs' : simVehicleType === 'car' ? '₹50 / 4 hrs' : '₹30 / 4 hrs'
+    });
+  };
+
+  // Handle PWA Install click
+  const handleInstallClick = async () => {
+    if (isIOS) {
+      setIosModalOpen(true);
+      return;
+    }
+    if (canInstall) {
+      await install();
+    } else {
+      // In desktop/browsers where prompt is not available, show guidance
+      setIosModalOpen(true);
+    }
+  };
+
+  // Handle Request OTP
+  const handleRequestOtp = async (e) => {
+    e.preventDefault();
+    setAuthError(null);
+    setAuthSuccess(null);
+    setOtpLoading(true);
+
+    try {
+      const res = await requestOtp(email);
+      setOtpSent(true);
+      if (res.demoCode) {
+        setDemoOtpCode(res.demoCode);
+      }
+      setAuthSuccess(`Verification code dispatched to ${email}. Check your inbox!`);
+    } catch (err) {
+      setAuthError(getErrorMessage(err));
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // Handle Verify OTP
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setAuthError(null);
+    setOtpLoading(true);
+
+    try {
+      await verifyOtp({
+        email,
+        otp: otp.trim(),
+        name: fullName.trim() || undefined,
+        role: 'operator'
+      });
+      setAuthModalOpen(false);
+      navigate('/dashboard');
+    } catch (err) {
+      setAuthError(getErrorMessage(err));
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // Handle Google Login Simulation / Execution
+  const handleGoogleSelect = async (account) => {
+    setGooglePickerOpen(false);
+    setOtpLoading(true);
+    try {
+      await loginWithGoogle({
+        email: account.email,
+        name: account.name,
+        googleId: account.sub,
+        picture: account.picture
+      });
+      setAuthModalOpen(false);
+      navigate('/dashboard');
+    } catch (err) {
+      setAuthError(getErrorMessage(err));
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // Handle Operator / Admin Login
+  const handleOperatorLogin = async (e) => {
+    e.preventDefault();
+    setAuthError(null);
+    setOtpLoading(true);
+
+    try {
+      await login({
+        username: operatorId.trim(),
+        ...(operatorMode === 'password' ? { password } : { mpin })
+      });
+      setAuthModalOpen(false);
+      navigate('/dashboard');
+    } catch (err) {
+      setAuthError(getErrorMessage(err));
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  // Demo Autofills
+  const fillDemoCreds = (type) => {
+    if (type === 'admin') {
+      setOperatorId('admin');
+      setPassword('Admin@1234');
+      setMpin('1234');
+    } else {
+      setOperatorId('operator1');
+      setPassword('Operator@123');
+      setMpin('4321');
+    }
+    setAuthError(null);
+  };
+
+  // Tariff calculator lookup
+  const getTariffEstimate = () => {
+    const baseRates = {
+      bike: { '1h': 10, '4h': 20, '12h': 40, '24h': 60, '1m': 400 },
+      car: { '1h': 25, '4h': 50, '12h': 100, '24h': 150, '1m': 1200 },
+      auto: { '1h': 15, '4h': 30, '12h': 60, '24h': 90, '1m': 600 },
+      cycle: { '1h': 5, '4h': 10, '12h': 15, '24h': 20, '1m': 150 },
+      bus: { '1h': 50, '4h': 100, '12h': 200, '24h': 300, '1m': 2500 }
+    };
+    const rate = baseRates[calcVehicle]?.[calcDuration] || 30;
+    const gst = Math.round(rate * 0.18);
+    return {
+      subtotal: rate,
+      gst,
+      total: rate + gst
+    };
+  };
+
+  const tariffEstimate = getTariffEstimate();
+
+  return (
+    <div className="landing-root min-h-screen bg-[#090D16] text-slate-100 selection:bg-indigo-600 selection:text-white">
+      {/* BACKGROUND AMBIENT GLOWS */}
+      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="fixed top-1/3 right-10 w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="fixed bottom-10 left-10 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+
+      {/* TOP FLOATING LUXURY NAVBAR */}
+      <header className="sticky top-0 z-40 bg-[#090D16]/85 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-3.5 transition-all">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <Link to="/" className="flex items-center gap-3">
+            <BrandLogo size="default" inverted={true} />
+          </Link>
+
+          {/* Center Navigation Links (Desktop) */}
+          <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-300">
+            <a href="#manual" className="hover:text-cyan-400 transition flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+              <span>User Manual</span>
+            </a>
+            <a href="#simulator" className="hover:text-indigo-400 transition flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Live Terminal Simulator</span>
+            </a>
+            <a href="#features" className="hover:text-emerald-400 transition flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Features</span>
+            </a>
+            <a href="#tariffs" className="hover:text-amber-400 transition flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5 text-amber-400" />
+              <span>Tariff Rates</span>
+            </a>
+            <a href="#install-pwa" className="hover:text-purple-400 transition flex items-center gap-1.5">
+              <Smartphone className="w-3.5 h-3.5 text-purple-400" />
+              <span>Mobile PWA App</span>
+            </a>
+            <a href="#faq" className="hover:text-slate-100 transition">
+              FAQ
+            </a>
+          </nav>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Install PWA Mobile Button */}
+            <button
+              onClick={handleInstallClick}
+              className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold transition shadow-xs"
+              title="Install Web App on your phone"
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-400 animate-bounce" />
+              <span className="hidden sm:inline">Install App</span>
+              <span className="sm:hidden">Install</span>
+            </button>
+
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-bold shadow-glow transition"
+              >
+                <span>Open Terminal</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setAuthTab('otp');
+                    setAuthSubmode('login');
+                    setAuthModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 text-xs font-bold text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => {
+                    setAuthTab('otp');
+                    setAuthSubmode('signup');
+                    setAuthModalOpen(true);
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-600 via-indigo-500 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-bold shadow-glow transition transform active:scale-95"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+                  <span>Free Sign Up</span>
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* HERO SECTION */}
+      <section className="relative pt-12 pb-20 px-4 sm:px-8 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Hero Left Content */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-xs font-semibold text-indigo-300">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>SR FABRICATION • INDIAN RAILWAYS COMPLIANT VEHICLE SYSTEM</span>
+              </div>
+
+              {/* Main Headline */}
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-outfit tracking-tight leading-[1.1] text-white">
+                Next-Gen Smart <br />
+                <span className="gradient-text-accent">Railway Parking</span> OS & Mobile App
+              </h1>
+
+              {/* Description */}
+              <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed mx-auto lg:mx-0">
+                A high-throughput, mission-critical parking system designed for Indian Railway stations.
+                Issue QR tokens in under <strong>2 seconds</strong>, automate multi-tier tariffs, manage digital monthly passes, and prevent revenue leakage with tamper-proof real-time audit trails.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+                {isAuthenticated ? (
+                  <Link
+                    to="/dashboard"
+                    className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-2xl text-sm font-black shadow-glow flex items-center justify-center gap-2.5 transition transform active:scale-95"
+                  >
+                    <span>Launch Parking Console</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setAuthTab('otp');
+                      setAuthSubmode('signup');
+                      setAuthModalOpen(true);
+                    }}
+                    className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-2xl text-sm font-black shadow-glow flex items-center justify-center gap-2.5 transition transform active:scale-95"
+                  >
+                    <Sparkles className="w-4 h-4 text-cyan-300" />
+                    <span>Get Free Access with Gmail</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={handleInstallClick}
+                  className="w-full sm:w-auto px-6 py-3.5 bg-slate-800/80 hover:bg-slate-700/80 text-white border border-white/10 rounded-2xl text-sm font-bold flex items-center justify-center gap-2.5 transition backdrop-blur-md"
+                >
+                  <Smartphone className="w-4 h-4 text-emerald-400" />
+                  <span>Install as Mobile App</span>
+                </button>
+
+                <a
+                  href="#manual"
+                  className="w-full sm:w-auto px-5 py-3.5 text-slate-300 hover:text-white rounded-2xl text-sm font-semibold flex items-center justify-center gap-1.5 transition"
+                >
+                  <BookOpen className="w-4 h-4 text-cyan-400" />
+                  <span>User Manuals</span>
+                </a>
+              </div>
+
+              {/* Live Metric Tickers */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-white/10">
+                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
+                  <div className="text-xl sm:text-2xl font-black font-mono text-cyan-400">&lt; 1.8s</div>
+                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">Token Issuing Speed</div>
+                </div>
+                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
+                  <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400">99.98%</div>
+                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">Station Gate Uptime</div>
+                </div>
+                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
+                  <div className="text-xl sm:text-2xl font-black font-mono text-indigo-400">50,000+</div>
+                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">Daily Railway Commuters</div>
+                </div>
+                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
+                  <div className="text-xl sm:text-2xl font-black font-mono text-amber-400">100%</div>
+                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">UPI & Cash Reconciliation</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Hero Right Visual / Live Interactive Simulator */}
+            <div className="lg:col-span-5" id="simulator">
+              <div className="relative">
+                {/* Decorative glowing gradient border */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-cyan-500 to-emerald-500 rounded-3xl blur-md opacity-40 animate-pulse" />
+
+                <div className="relative glass-panel rounded-3xl p-5 sm:p-6 border border-white/10 shadow-2xl space-y-4">
+                  {/* Card Header */}
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-indigo-500/20 text-indigo-400 rounded-lg">
+                        <QrCode className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-white uppercase tracking-wider">
+                          Live Booth Terminal Simulator
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono">
+                          Central Station • Gate Lane 01
+                        </div>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-[10px] font-bold">
+                      READY
+                    </span>
+                  </div>
+
+                  {/* Simulator Form */}
+                  <form onSubmit={handleSimGenerateToken} className="space-y-3.5">
+                    {/* Vehicle Type Switcher */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Select Vehicle Category
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { id: 'bike', label: '2-Wheeler', icon: Bike, rate: '₹20/4h' },
+                          { id: 'car', label: '4-Wheeler', icon: Car, rate: '₹50/4h' },
+                          { id: 'auto', label: 'Auto / 3W', icon: Compass, rate: '₹30/4h' }
+                        ].map((v) => {
+                          const Icon = v.icon;
+                          const active = simVehicleType === v.id;
+                          return (
+                            <button
+                              key={v.id}
+                              type="button"
+                              onClick={() => setSimVehicleType(v.id)}
+                              className={`p-2.5 rounded-xl text-center border transition flex flex-col items-center gap-1 ${
+                                active
+                                  ? 'bg-indigo-600/30 border-indigo-500 text-white shadow-glow'
+                                  : 'bg-slate-800/60 border-white/5 text-slate-400 hover:bg-slate-800'
+                              }`}
+                            >
+                              <Icon className={`w-5 h-5 ${active ? 'text-cyan-400' : 'text-slate-400'}`} />
+                              <span className="text-[11px] font-bold leading-tight">{v.label}</span>
+                              <span className="text-[9px] font-mono text-slate-400">{v.rate}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* License Plate Input */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                        Vehicle Registration Number
+                      </label>
+                      <input
+                        type="text"
+                        value={simPlate}
+                        onChange={(e) => setSimPlate(e.target.value.toUpperCase())}
+                        placeholder="e.g. MH 12 AB 8842"
+                        className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-white/10 rounded-xl text-white font-mono font-bold tracking-widest text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition"
+                      />
+                    </div>
+
+                    {/* Instant Generate Button */}
+                    <button
+                      type="submit"
+                      className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-glowEmerald flex items-center justify-center gap-2 transition"
+                    >
+                      <Printer className="w-4 h-4" />
+                      <span>Print Simulated QR Token</span>
+                    </button>
+                  </form>
+
+                  {/* Generated Simulated Token Card */}
+                  {simGeneratedToken && (
+                    <div className="p-3.5 bg-white text-slate-900 rounded-2xl border border-slate-300 shadow-xl space-y-2 animate-fade-in font-mono text-xs">
+                      <div className="text-center border-b border-dashed border-slate-400 pb-2">
+                        <div className="font-black text-sm tracking-tight text-[#142B4A]">SR FABRICATION</div>
+                        <div className="text-[10px] text-slate-600">CENTRAL RAILWAY STATION PARKING</div>
+                      </div>
+                      <div className="flex justify-between py-1 text-[11px]">
+                        <span className="text-slate-600">TOKEN NO:</span>
+                        <span className="font-black text-blue-800">{simGeneratedToken.tokenNumber}</span>
+                      </div>
+                      <div className="flex justify-between py-1 text-[11px]">
+                        <span className="text-slate-600">VEHICLE:</span>
+                        <span className="font-black">{simGeneratedToken.vehicleNumber}</span>
+                      </div>
+                      <div className="flex justify-between py-1 text-[11px]">
+                        <span className="text-slate-600">CATEGORY:</span>
+                        <span className="uppercase font-bold">{simGeneratedToken.vehicleType}</span>
+                      </div>
+                      <div className="flex justify-between py-1 text-[11px]">
+                        <span className="text-slate-600">ENTRY TIME:</span>
+                        <span>{simGeneratedToken.date} {simGeneratedToken.entryTime}</span>
+                      </div>
+                      <div className="p-2 bg-slate-100 rounded-lg text-center text-[10px] text-slate-700 font-bold">
+                        RATE SLAB: {simGeneratedToken.rateInfo}
+                      </div>
+                      <div className="text-center text-[9px] text-slate-500 pt-1 border-t border-dashed border-slate-400">
+                        * KEEP TOKEN SAFE • APPLIES LOSS PENALTY *
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* COMPREHENSIVE INTERACTIVE USER MANUAL SECTION */}
+      <section id="manual" className="py-20 px-4 sm:px-8 border-t border-white/10 bg-slate-950/60 relative">
+        <div className="max-w-7xl mx-auto space-y-12">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-xs font-bold text-cyan-400">
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>OFFICIAL DOCUMENTATION & OPERATIONAL WORKFLOWS</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+              Complete User Manual for All Station Users
+            </h2>
+            <p className="text-sm text-slate-400">
+              Comprehensive operational SOPs, terminal guidelines, pass issuing steps, and hardware instructions tailored for every role in the railway ecosystem.
+            </p>
+          </div>
+
+          {/* Role Persona Tabs */}
+          <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-slate-900/90 border border-white/10 rounded-2xl max-w-3xl mx-auto">
+            {[
+              { id: 'operator', label: '1. Booth Attendant / Operator', icon: UserCheck, desc: 'Entry, Exit, POS Cash' },
+              { id: 'admin', label: '2. Station Admin / Manager', icon: ShieldCheck, desc: 'Tariffs, Staff, Audits' },
+              { id: 'commuter', label: '3. Commuter / Vehicle Owner', icon: CreditCard, desc: 'Monthly Pass, Renewals' },
+              { id: 'hardware', label: '4. Hardware & POS Setup', icon: Printer, desc: 'Thermal Print, Barcode, PWA' }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const active = activeManualTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveManualTab(tab.id)}
+                  className={`flex-1 min-w-[160px] sm:min-w-[180px] p-2.5 sm:p-3 rounded-xl text-left transition flex items-center gap-2.5 ${
+                    active
+                      ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-glow'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-cyan-300' : 'text-slate-400'}`} />
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold truncate leading-tight">{tab.label}</div>
+                    <div className="text-[10px] text-slate-300/80 truncate">{tab.desc}</div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* TAB 1: OPERATOR & BOOTH ATTENDANT MANUAL */}
+          {activeManualTab === 'operator' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
+                  <div className="w-6 h-6 rounded-lg bg-indigo-500/20 flex items-center justify-center text-xs font-mono font-black">
+                    1
+                  </div>
+                  <span>Vehicle Check-In Workflow</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Issuing Fast QR Tokens</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  When a vehicle arrives at the barrier:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Tap the <strong>Vehicle Entry</strong> button on mobile bottom bar or dashboard.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Select the category: <strong>2-Wheeler, 4-Wheeler, Auto, Cycle, Bus</strong>.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Input license plate number. Phone number is optional for SMS notifications.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Hit <strong>Issue & Print Token</strong>. Thermal POS immediately prints 80mm barcode token.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs uppercase tracking-wider">
+                  <div className="w-6 h-6 rounded-lg bg-cyan-500/20 flex items-center justify-center text-xs font-mono font-black">
+                    2
+                  </div>
+                  <span>Vehicle Exit & Fee Slabs</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Barcode Scanning & Calculation</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  When customer returns to exit the parking facility:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Open <strong>Vehicle Exit</strong> screen on terminal or mobile phone.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Scan customer QR token with mobile camera or laser scanner, or type Token Number.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>System calculates parking duration and slab tier breakdown automatically.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Lost token option applies official Indian Railways penalty tariff automatically.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center text-xs font-mono font-black">
+                    3
+                  </div>
+                  <span>Payment Collection</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Cash & Dynamic UPI Reconciliation</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Seamless dual collection support:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong>Cash Payment:</strong> Enter tendered amount; system displays exact change return.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong>UPI QR Payment:</strong> Tap UPI to generate dynamic QR with exact rupee amount encoded.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Print customer exit receipt with GST breakdown and release exit barrier.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
+                  <div className="w-6 h-6 rounded-lg bg-amber-500/20 flex items-center justify-center text-xs font-mono font-black">
+                    4
+                  </div>
+                  <span>End of Shift Settlement</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Cash Drawer Handover SOP</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  At the end of an 8-hour or 12-hour operator shift:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <span>View <strong>Shift Summary</strong> under dashboard.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <span>Tally physical cash drawer with system recorded cash total.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <span>Print Shift Settlement Statement for station manager sign-off.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-purple-400 font-bold text-xs uppercase tracking-wider">
+                  <div className="w-6 h-6 rounded-lg bg-purple-500/20 flex items-center justify-center text-xs font-mono font-black">
+                    5
+                  </div>
+                  <span>4-Digit MPIN Security</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Quick Terminal Lock & Unlock</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Fast booth security for relief operators:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Unlock terminal in 1 second using personal 4-digit security MPIN.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Automatic lockout protection activates after 5 consecutive failed attempts.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Session tracks all issued tokens specifically to your Operator ID.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                  <div className="w-6 h-6 rounded-lg bg-rose-500/20 flex items-center justify-center text-xs font-mono font-black">
+                    6
+                  </div>
+                  <span>Emergency Overrides</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Emergency Barrier & VIP Entry</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Protocols for VIP or emergency ambulances:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                    <span>Ambulance, Fire, Police, and Railway Officers park free of charge.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                    <span>Select 'Official Vehicle' toggle in Entry form to log license plate with ₹0 tariff.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                    <span>Action is permanently timestamped in the Railway Audit Logs.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: STATION ADMIN & MANAGER MANUAL */}
+          {activeManualTab === 'admin' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
+                  <BarChart3 className="w-4 h-4" />
+                  <span>Real-Time Telemetry</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Live Occupancy & Capacity Alarms</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Monitor capacity at a glance:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>View live slot occupancy dials for 2-Wheelers, 4-Wheelers, and Premium bays.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Automatic warning indicator triggers when lot exceeds 90% capacity.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Real-time vehicle movement graph tracks morning & evening train rush hours.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs uppercase tracking-wider">
+                  <Layers className="w-4 h-4" />
+                  <span>Dynamic Tariff Engine</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Configuring Slab Rules & GST</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Set rates compliant with railway circulars:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Navigate to <strong>Tariff Management</strong> in the admin sidebar.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Configure hourly tiers (0-2h, 2-6h, 6-12h, 12-24h, Over 24h cap).</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Configure helmet deposit fee, night parking premium, and GST percentage (18%).</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-purple-400 font-bold text-xs uppercase tracking-wider">
+                  <Users className="w-4 h-4" />
+                  <span>Booth Operator Management</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Staff Accounts & Shift Assignment</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Maintain booth operator security:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Add new operators with unique Operator ID (e.g. OP-104) and name.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Assign 4-digit security MPIN for rapid barrier login.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Temporarily deactivate accounts or reset credentials in 1 click.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <FileText className="w-4 h-4" />
+                  <span>Financial & GST Audits</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Settlement Statements & Exports</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Comprehensive fiscal accountability:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Generate daily, weekly, and monthly gross revenue statements.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Review breakdown of Cash collections versus direct UPI bank settlement.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Export audit-compliant CSV and print PDF statements for Railway Commercial Audits.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Tamper-Proof Audit Trail</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Security & Manual Override Logs</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Zero tolerance for revenue evasion:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                    <span>Every token cancellation requires mandatory operator justification.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                    <span>All rate slab edits, failed logins, and gate overrides are permanently logged.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                    <span>Search audit logs by date, operator ID, or vehicle number in seconds.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
+                  <Compass className="w-4 h-4" />
+                  <span>Station Hardware Integration</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Receipt Header & Printer Rules</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Tailor POS configuration:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <span>Customize railway station name, division code, and GSTIN number.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <span>Configure paper width (80mm vs 58mm POS thermal printers).</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                    <span>Set receipt footer disclaimer and railway grievance helpline contacts.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: COMMUTER & VEHICLE OWNER MANUAL */}
+          {activeManualTab === 'commuter' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-purple-400 font-bold text-xs uppercase tracking-wider">
+                  <CreditCard className="w-4 h-4" />
+                  <span>Monthly Passes</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Applying for a Railway Pass</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  For daily office train commuters:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Apply at booth or online for 1-month, 6-month, or 12-month pass.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Provides <strong>up to 60% savings</strong> compared to hourly parking tokens.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <span>Receive instant digital pass card on your mobile screen with personal QR.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs uppercase tracking-wider">
+                  <QrCode className="w-4 h-4" />
+                  <span>Contactless Fast Gate Access</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Express Lane Barrier Entry</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Zero waiting in line:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Show digital pass QR to the optical scanner or attendant.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>System validates pass status in under 500 milliseconds and opens gate.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>No need to collect paper tickets or pay cash each morning.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <Clock className="w-4 h-4" />
+                  <span>Pass Renewal & Alerts</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Hassle-Free Validity Extension</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Never miss an expiry:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Validity date clearly printed on physical and digital card.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Renew your pass anytime in 1 click before or upon expiration.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Instant payment via UPI scan or cash receipt.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: HARDWARE & POS SETUP MANUAL */}
+          {activeManualTab === 'hardware' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
+                  <Printer className="w-4 h-4" />
+                  <span>Thermal POS Printers</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">ESC/POS 80mm & 58mm Drivers</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Compatible with all standard station hardware:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                    <span>Connect via USB, Ethernet LAN, or Bluetooth to terminal / tablet.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                    <span>Automated print dialog initiates when issuing tokens or receipts.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                    <span>High-contrast monochrome QR prints scan easily even with phone cameras.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs uppercase tracking-wider">
+                  <QrCode className="w-4 h-4" />
+                  <span>Optical Barcode Scanners</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">USB HID & Mobile Camera Scanners</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Ultra-fast token readout:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Plug and play USB 2D QR scanners emulate automatic keyboard strokes.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>On mobile phones, tap the Camera icon to trigger high-speed camera scanner.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                    <span>Works in low-light night conditions with device flashlight support.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <Smartphone className="w-4 h-4" />
+                  <span>Mobile PWA Offline Cache</span>
+                </div>
+                <h3 className="text-lg font-bold text-white font-outfit">Station Offline Resilience</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Guaranteed operation even if internet drops:
+                </p>
+                <ul className="text-xs text-slate-400 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>PWA Service Worker caches core application bundle locally on device.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Token generation continues uninterrupted at gate booths.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>Automatic sync reconciles records once network connection is restored.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* INTERACTIVE TARIFF RATES & CALCULATOR */}
+      <section id="tariffs" className="py-20 px-4 sm:px-8 border-t border-white/10 relative">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-xs font-bold text-amber-400">
+              <Layers className="w-3.5 h-3.5" />
+              <span>OFFICIAL TARIFF SLAB CALCULATOR</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+              Transparent Station Parking Tariffs
+            </h2>
+            <p className="text-sm text-slate-400">
+              Check official Indian Railways slab rates for any vehicle type and calculate your estimated cost in real time.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Tariff Matrix Table */}
+            <div className="lg:col-span-7 glass-panel rounded-3xl p-6 border border-white/10 space-y-4">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  Official Standard Rates Schedule
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">GST 18% Inclusive</span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="text-slate-400 border-b border-white/10 font-mono">
+                      <th className="py-2.5">Category</th>
+                      <th className="py-2.5">0 - 4 Hrs</th>
+                      <th className="py-2.5">4 - 12 Hrs</th>
+                      <th className="py-2.5">12 - 24 Hrs</th>
+                      <th className="py-2.5">Monthly Pass</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-slate-200">
+                    <tr>
+                      <td className="py-3 font-bold flex items-center gap-2">
+                        <Bike className="w-4 h-4 text-cyan-400" />
+                        <span>2-Wheeler / Bike</span>
+                      </td>
+                      <td className="py-3 font-mono">₹20</td>
+                      <td className="py-3 font-mono">₹40</td>
+                      <td className="py-3 font-mono">₹60</td>
+                      <td className="py-3 font-mono font-bold text-emerald-400">₹400</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-bold flex items-center gap-2">
+                        <Car className="w-4 h-4 text-indigo-400" />
+                        <span>4-Wheeler / Car</span>
+                      </td>
+                      <td className="py-3 font-mono">₹50</td>
+                      <td className="py-3 font-mono">₹100</td>
+                      <td className="py-3 font-mono">₹150</td>
+                      <td className="py-3 font-mono font-bold text-emerald-400">₹1,200</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-bold flex items-center gap-2">
+                        <Compass className="w-4 h-4 text-amber-400" />
+                        <span>Auto-Rickshaw (3W)</span>
+                      </td>
+                      <td className="py-3 font-mono">₹30</td>
+                      <td className="py-3 font-mono">₹60</td>
+                      <td className="py-3 font-mono">₹90</td>
+                      <td className="py-3 font-mono font-bold text-emerald-400">₹600</td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 font-bold flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-purple-400" />
+                        <span>Bicycle / Cycle</span>
+                      </td>
+                      <td className="py-3 font-mono">₹10</td>
+                      <td className="py-3 font-mono">₹15</td>
+                      <td className="py-3 font-mono">₹20</td>
+                      <td className="py-3 font-mono font-bold text-emerald-400">₹150</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Interactive Tariff Calculator */}
+            <div className="lg:col-span-5 glass-card p-6 border border-white/10 space-y-4">
+              <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
+                <CreditCard className="w-4 h-4" />
+                <span>Live Cost Estimator</span>
+              </div>
+
+              {/* Vehicle Selection */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  Vehicle Type
+                </label>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {['bike', 'car', 'auto', 'cycle'].map((v) => (
+                    <button
+                      key={v}
+                      type="button"
+                      onClick={() => setCalcVehicle(v)}
+                      className={`py-2 px-2 rounded-xl text-center capitalize text-xs font-bold transition border ${
+                        calcVehicle === v
+                          ? 'bg-indigo-600 border-indigo-400 text-white'
+                          : 'bg-slate-900 border-white/5 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {v}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Duration Selection */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  Duration Tier
+                </label>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {[
+                    { id: '1h', label: '1 Hr' },
+                    { id: '4h', label: '4 Hrs' },
+                    { id: '12h', label: '12 Hrs' },
+                    { id: '24h', label: '24 Hrs' },
+                    { id: '1m', label: '1 Mo' }
+                  ].map((d) => (
+                    <button
+                      key={d.id}
+                      type="button"
+                      onClick={() => setCalcDuration(d.id)}
+                      className={`py-2 px-1 rounded-xl text-center text-xs font-bold transition border ${
+                        calcDuration === d.id
+                          ? 'bg-cyan-600 border-cyan-400 text-white'
+                          : 'bg-slate-900 border-white/5 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Estimate Breakdown Card */}
+              <div className="p-4 bg-slate-900/90 rounded-2xl border border-white/10 space-y-2 font-mono text-xs">
+                <div className="flex justify-between text-slate-400">
+                  <span>Base Tariff:</span>
+                  <span>₹{tariffEstimate.subtotal}</span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>GST (18%):</span>
+                  <span>₹{tariffEstimate.gst}</span>
+                </div>
+                <div className="flex justify-between text-base font-black text-white pt-2 border-t border-white/10">
+                  <span>Total Payable:</span>
+                  <span className="text-emerald-400 font-mono">₹{tariffEstimate.total}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setAuthTab('otp');
+                  setAuthSubmode('signup');
+                  setAuthModalOpen(true);
+                }}
+                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl text-xs transition shadow-glow flex items-center justify-center gap-2"
+              >
+                <span>Purchase Digital Pass / Token</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* INSTALL AS MOBILE APP (PWA SHOWCASE) */}
+      <section id="install-pwa" className="py-20 px-4 sm:px-8 border-t border-white/10 bg-slate-950/70 relative">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs font-bold text-emerald-400">
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>INSTALLABLE PROGRESSIVE WEB APPLICATION (PWA)</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+              Install As Native App on Any Mobile
+            </h2>
+            <p className="text-sm text-slate-400">
+              Experience the full application directly installed on your smartphone (Android & iPhone). Fast launches from home screen, zero Play Store downloads required, works offline at station gates!
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="glass-card p-6 space-y-4 text-center flex flex-col items-center">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                <Smartphone className="w-7 h-7" />
+              </div>
+              <h3 className="text-base font-bold text-white font-outfit">1-Tap Direct Install</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Click below to add the application straight to your Android or iPhone home screen with native app icon, splash screen, and full-screen experience.
+              </p>
+              <button
+                onClick={handleInstallClick}
+                className="mt-auto w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-glowEmerald transition"
+              >
+                <Download className="w-4 h-4" />
+                <span>Install Mobile App Now</span>
+              </button>
+            </div>
+
+            <div className="glass-card p-6 space-y-4 text-center flex flex-col items-center">
+              <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                <Zap className="w-7 h-7" />
+              </div>
+              <h3 className="text-base font-bold text-white font-outfit">Native Mobile Navigation</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                When launched from your mobile home screen, browser search bars vanish! Features touch-friendly bottom bars, haptic feedbacks, and instant optical camera QR scanners.
+              </p>
+              <div className="mt-auto p-2.5 bg-slate-900 rounded-xl text-[11px] text-cyan-300 font-mono w-full">
+                Edge-to-Edge OLED UI • Safe Area
+              </div>
+            </div>
+
+            <div className="glass-card p-6 space-y-4 text-center flex flex-col items-center">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                <Clock className="w-7 h-7" />
+              </div>
+              <h3 className="text-base font-bold text-white font-outfit">Offline Station Mode</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Railway stations often have poor cell signal. Our PWA automatically caches tariffs and tokens locally, letting booth attendants work uninterrupted.
+              </p>
+              <div className="mt-auto p-2.5 bg-slate-900 rounded-xl text-[11px] text-emerald-400 font-mono w-full">
+                100% Offline Cache Active
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ SECTION */}
+      <section id="faq" className="py-20 px-4 sm:px-8 border-t border-white/10 relative">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-xs font-bold text-indigo-400">
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>FREQUENTLY ASKED QUESTIONS</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+              Station Operator & User Inquiries
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              {
+                q: 'How does a first-time user sign up with free Gmail access?',
+                a: 'Click "Free Sign Up" or "Get Started" on this page. Enter your Gmail address and click "Send Verification Code". The system issues a 6-digit OTP code directly to your email (with zero cost). Enter the code to instantly create your user account and access the terminal!'
+              },
+              {
+                q: 'How can I install the app on an iPhone (iOS)?',
+                a: 'Open this website in Safari on your iPhone. Tap the Share icon (square with arrow pointing up) at the bottom, scroll down and tap "Add to Home Screen", then tap "Add". The app icon appears on your home screen and opens in standalone full-screen mode.'
+              },
+              {
+                q: 'What happens if a vehicle owner loses their parking token?',
+                a: 'The booth operator opens the Vehicle Exit screen and toggles "Lost Token Recovery". The operator verifies the vehicle registration certificate (RC) and driver identity, and the system automatically applies the official Indian Railways Lost Token fee structure before clearing exit.'
+              },
+              {
+                q: 'Can the system operate if the railway station internet goes down?',
+                a: 'Yes. Thanks to the PWA Service Worker technology, all UI components, tariff slabs, and issuing modules remain cached on the device. Once connectivity returns, transactions automatically synchronize with the central database.'
+              },
+              {
+                q: 'Does the system print GST compliant thermal receipts?',
+                a: 'Yes. Every printed thermal ticket and exit receipt displays the Indian Railways station division, GSTIN number, CGST/SGST breakdown, timestamp, token barcode, and official grievance helpline number.'
+              }
+            ].map((faq, idx) => {
+              const isOpen = activeFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  className="glass-card overflow-hidden transition"
+                >
+                  <button
+                    onClick={() => setActiveFaq(isOpen ? null : idx)}
+                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-white hover:text-indigo-300 transition"
+                  >
+                    <span>{faq.q}</span>
+                    {isOpen ? <ChevronUp className="w-4 h-4 text-indigo-400 shrink-0" /> : <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />}
+                  </button>
+                  {isOpen && (
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs text-slate-300 leading-relaxed border-t border-white/5 pt-3">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-white/10 bg-[#060911] py-12 px-4 sm:px-8 text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          <div className="space-y-1">
+            <BrandLogo size="small" inverted={true} />
+            <p className="text-[11px] text-slate-500 mt-1">
+              SR FABRICATION • Authorized Railway Station Vehicle Parking Management System
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-6 font-medium text-slate-300">
+            <a href="#manual" className="hover:text-white transition">User Manuals</a>
+            <a href="#tariffs" className="hover:text-white transition">Tariff Schedule</a>
+            <a href="#install-pwa" className="hover:text-white transition">PWA Mobile App</a>
+            <button onClick={() => { setAuthTab('operator'); setAuthModalOpen(true); }} className="hover:text-white transition">
+              Staff Portal
+            </button>
+          </div>
+
+          <div className="text-[11px] text-slate-500 font-mono">
+            Production v2.0 • ISO 9001 Certified Terminal OS
+          </div>
+        </div>
+      </footer>
+
+      {/* AUTH MODAL (LOGIN & SIGNUP WITH GOOGLE & EMAIL OTP) */}
+      {authModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
+            {/* Modal Header */}
+            <div className="bg-[#142B4A] p-5 sm:p-6 text-center text-white relative">
+              <button
+                onClick={() => setAuthModalOpen(false)}
+                className="absolute top-4 right-4 p-1.5 text-blue-200 hover:text-white hover:bg-white/10 rounded-xl transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="flex justify-center mb-2">
+                <BrandLogo size="default" inverted={true} />
+              </div>
+              <div className="text-xs text-blue-200 mt-1 font-medium">
+                {authSubmode === 'signup' ? 'Create Free Account / Sign Up' : 'Sign In to Parking Terminal'}
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 sm:p-6 space-y-4">
+              {/* Notices */}
+              {authError && (
+                <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <span>{authError}</span>
+                </div>
+              )}
+              {authSuccess && (
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-300 text-xs flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span>{authSuccess}</span>
+                </div>
+              )}
+
+              {/* Demo OTP Banner for instant free testing */}
+              {demoOtpCode && (
+                <div className="p-3 bg-indigo-500/15 border border-indigo-500/30 rounded-xl text-xs text-indigo-300 space-y-1">
+                  <div className="font-bold text-white flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Free Access Verification Code:</span>
+                  </div>
+                  <div className="text-base font-black font-mono tracking-widest text-cyan-300">
+                    {demoOtpCode}
+                  </div>
+                  <div className="text-[10px] text-slate-400">
+                    Enter this code below to proceed immediately!
+                  </div>
+                </div>
+              )}
+
+              {/* Mode Tabs: Email OTP vs Google vs Booth Credentials */}
+              <div className="flex p-1 bg-slate-950 rounded-xl border border-white/5 text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => { setAuthTab('otp'); setAuthError(null); }}
+                  className={`flex-1 py-2 rounded-lg transition ${
+                    authTab === 'otp' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Email & OTP
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthTab('google'); setAuthError(null); }}
+                  className={`flex-1 py-2 rounded-lg transition ${
+                    authTab === 'google' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Google
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthTab('operator'); setAuthError(null); }}
+                  className={`flex-1 py-2 rounded-lg transition ${
+                    authTab === 'operator' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Booth Staff
+                </button>
+              </div>
+
+              {/* TAB 1: EMAIL + OTP (FREE ACCESS) */}
+              {authTab === 'otp' && (
+                <div className="space-y-4">
+                  {!otpSent ? (
+                    <form onSubmit={handleRequestOtp} className="space-y-3.5">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                          Your Email (Gmail or other)
+                        </label>
+                        <div className="relative">
+                          <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="youremail@gmail.com"
+                            className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 transition"
+                          />
+                        </div>
+                        <p className="text-[10px] text-slate-400 mt-1">
+                          First time users will be automatically registered with free access!
+                        </p>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={otpLoading}
+                        className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-glow flex items-center justify-center gap-2 transition disabled:opacity-50"
+                      >
+                        {otpLoading ? (
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Zap className="w-4 h-4 text-cyan-300" />
+                            <span>Request Free 6-Digit OTP</span>
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleVerifyOtp} className="space-y-3.5">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                          Full Name (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          placeholder="e.g. Rahul Sharma"
+                          className="w-full px-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 transition"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                          Enter 6-Digit OTP Code
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          maxLength={6}
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value)}
+                          placeholder="••••••"
+                          className="w-full px-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-center font-mono font-bold tracking-widest text-lg focus:outline-none focus:border-cyan-400 transition"
+                        />
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setOtpSent(false)}
+                          className="flex-1 py-2.5 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-700 transition"
+                        >
+                          Change Email
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={otpLoading}
+                          className="flex-1 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-glowEmerald flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+                        >
+                          {otpLoading ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          ) : (
+                            <>
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>Verify & Enter</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 2: CONTINUE WITH GOOGLE */}
+              {authTab === 'google' && (
+                <div className="space-y-4 text-center py-2">
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Sign in with your Google account for instantaneous 1-click verification with zero password setup needed.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => setGooglePickerOpen(true)}
+                    className="w-full py-3.5 px-4 bg-white hover:bg-slate-100 text-slate-900 rounded-2xl font-bold text-xs shadow-md transition flex items-center justify-center gap-3 border border-slate-200"
+                  >
+                    {/* Google G Logo SVG */}
+                    <svg className="w-4 h-4" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                      />
+                    </svg>
+                    <span>Continue with Google</span>
+                  </button>
+
+                  <div className="text-[10px] text-slate-500">
+                    SR Fabrication protects your privacy. Authorized Indian Railway authentication.
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: BOOTH STAFF CREDENTIALS */}
+              {authTab === 'operator' && (
+                <form onSubmit={handleOperatorLogin} className="space-y-3.5">
+                  <div className="flex p-0.5 bg-slate-950 rounded-lg border border-white/5 text-[11px] font-bold">
+                    <button
+                      type="button"
+                      onClick={() => setOperatorMode('password')}
+                      className={`flex-1 py-1.5 rounded transition ${
+                        operatorMode === 'password' ? 'bg-slate-800 text-white' : 'text-slate-400'
+                      }`}
+                    >
+                      Password
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setOperatorMode('mpin')}
+                      className={`flex-1 py-1.5 rounded transition ${
+                        operatorMode === 'mpin' ? 'bg-slate-800 text-white' : 'text-slate-400'
+                      }`}
+                    >
+                      4-Digit MPIN
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                      Operator ID or Username
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={operatorId}
+                      onChange={(e) => setOperatorId(e.target.value)}
+                      placeholder="e.g. admin or operator1"
+                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 transition"
+                    />
+                  </div>
+
+                  {operatorMode === 'password' ? (
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 transition"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">
+                        4-Digit MPIN
+                      </label>
+                      <input
+                        type="password"
+                        required
+                        maxLength={4}
+                        value={mpin}
+                        onChange={(e) => setMpin(e.target.value.replace(/\D/g, ''))}
+                        placeholder="••••"
+                        className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-center font-mono font-bold tracking-widest text-lg focus:outline-none focus:border-indigo-500 transition"
+                      />
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={otpLoading}
+                    className="w-full py-3 bg-[#142B4A] hover:bg-[#2457A7] text-white text-xs font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2"
+                  >
+                    {otpLoading ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-4 h-4" />
+                        <span>Authenticate Staff</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* 1-Click Test Credentials */}
+                  <div className="pt-2 border-t border-white/10">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1 text-center">
+                      Quick Test Accounts
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fillDemoCreds('admin')}
+                        className="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] font-mono transition"
+                      >
+                        Admin (admin)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => fillDemoCreds('operator')}
+                        className="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] font-mono transition"
+                      >
+                        Booth (operator1)
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* GOOGLE SIMULATED ACCOUNT SELECTOR MODAL */}
+      {googlePickerOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-sm bg-white text-slate-900 rounded-3xl shadow-2xl p-6 space-y-4">
+            <div className="text-center space-y-1">
+              <div className="flex justify-center mb-1">
+                <svg className="w-8 h-8" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-bold text-slate-800">Sign in with Google</h3>
+              <p className="text-xs text-slate-500">Choose an account to continue to SRF Parking</p>
+            </div>
+
+            <div className="divide-y divide-slate-100 border-y border-slate-100">
+              {[
+                { name: 'Aman (Primary)', email: 'aman.railway@gmail.com', sub: 'g-101' },
+                { name: 'Commuter User', email: 'commuter.user@gmail.com', sub: 'g-102' },
+                { name: 'Station Staff', email: 'railway.operator@gmail.com', sub: 'g-103' }
+              ].map((acc) => (
+                <button
+                  key={acc.email}
+                  type="button"
+                  onClick={() => handleGoogleSelect(acc)}
+                  className="w-full py-3 px-2 flex items-center gap-3 text-left hover:bg-slate-50 rounded-xl transition"
+                >
+                  <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                    {acc.name.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-slate-800 truncate">{acc.name}</div>
+                    <div className="text-[11px] text-slate-500 truncate">{acc.email}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setGooglePickerOpen(false)}
+              className="w-full py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* IOS / BROWSER PWA INSTALL INSTRUCTION MODAL */}
+      {iosModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-sm bg-slate-900 border border-white/10 rounded-3xl shadow-2xl p-6 space-y-4 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto">
+              <Download className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold font-outfit text-white">Install SRF Parking App</h3>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              To install this application on your smartphone:
+            </p>
+
+            <div className="p-4 bg-slate-950 rounded-2xl border border-white/5 text-left text-xs space-y-3">
+              <div className="flex items-start gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-black flex items-center justify-center shrink-0">1</span>
+                <span className="text-slate-300">Tap the <strong>Share</strong> button <Share2 className="w-3.5 h-3.5 inline text-cyan-400 mx-0.5" /> in Safari or Chrome.</span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-black flex items-center justify-center shrink-0">2</span>
+                <span className="text-slate-300">Scroll down and tap <strong>Add to Home Screen</strong>.</span>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-black flex items-center justify-center shrink-0">3</span>
+                <span className="text-slate-300">Tap <strong>Add</strong> at top right to launch full-screen mobile app!</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIosModalOpen(false)}
+              className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl text-xs transition shadow-glow"
+            >
+              Got It, Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

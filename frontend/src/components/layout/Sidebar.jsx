@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   ArrowDownRight,
@@ -14,7 +14,9 @@ import {
   Settings,
   ShieldAlert,
   X,
-  LogOut
+  LogOut,
+  BookOpen,
+  Home
 } from 'lucide-react';
 import { BrandLogo } from '../common/BrandLogo.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -43,37 +45,37 @@ export function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Backdrop for mobile */}
+      {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden no-print"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden no-print"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-[#142B4A] text-white flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-[#0B1120] text-slate-100 border-r border-white/10 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } no-print`}
       >
         {/* Brand Header */}
-        <div className="flex items-center justify-between p-5 border-b border-blue-900/50">
+        <div className="flex items-center justify-between p-5 border-b border-white/10">
           <BrandLogo inverted={true} />
           <button
             onClick={onClose}
-            className="p-1.5 text-blue-300 hover:text-white rounded-lg lg:hidden hover:bg-white/10"
+            className="p-1.5 text-slate-400 hover:text-white rounded-lg lg:hidden hover:bg-white/10 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Navigation scrollable body */}
-        <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
+        <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6">
           {/* Operations Section */}
           <div>
-            <div className="text-[10px] font-bold text-blue-300 uppercase tracking-widest px-3 mb-2">
-              Operations
+            <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest px-3 mb-2 font-mono">
+              Terminal Operations
             </div>
             <nav className="space-y-1">
               {navItems.map((item) => {
@@ -88,12 +90,12 @@ export function Sidebar({ isOpen, onClose }) {
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
                         isActive
-                          ? 'bg-[#2457A7] text-white shadow-sm font-semibold'
-                          : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                          ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold shadow-glow'
+                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
                       }`
                     }
                   >
-                    <Icon className="w-4 h-4 shrink-0 text-blue-300" />
+                    <Icon className="w-4 h-4 shrink-0 text-cyan-400" />
                     <span>{item.label}</span>
                   </NavLink>
                 );
@@ -104,8 +106,8 @@ export function Sidebar({ isOpen, onClose }) {
           {/* Administration Section */}
           {isAdmin && (
             <div>
-              <div className="text-[10px] font-bold text-blue-300 uppercase tracking-widest px-3 mb-2">
-                Administration
+              <div className="text-[10px] font-bold text-purple-400 uppercase tracking-widest px-3 mb-2 font-mono">
+                Railway Administration
               </div>
               <nav className="space-y-1">
                 {adminNavItems.map((item) => {
@@ -120,12 +122,12 @@ export function Sidebar({ isOpen, onClose }) {
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
                           isActive
-                            ? 'bg-[#2457A7] text-white shadow-sm font-semibold'
-                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold shadow-glow'
+                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
                         }`
                       }
                     >
-                      <Icon className="w-4 h-4 shrink-0 text-blue-300" />
+                      <Icon className="w-4 h-4 shrink-0 text-purple-400" />
                       <span>{item.label}</span>
                     </NavLink>
                   );
@@ -133,10 +135,34 @@ export function Sidebar({ isOpen, onClose }) {
               </nav>
             </div>
           )}
+
+          {/* Quick Landing Page & Manual link */}
+          <div className="pt-2 border-t border-white/5">
+            <Link
+              to="/#manual"
+              onClick={() => {
+                if (window.innerWidth < 1024) onClose();
+              }}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5 hover:text-white transition"
+            >
+              <BookOpen className="w-4 h-4 text-cyan-400" />
+              <span>User Manuals</span>
+            </Link>
+            <Link
+              to="/"
+              onClick={() => {
+                if (window.innerWidth < 1024) onClose();
+              }}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5 hover:text-white transition"
+            >
+              <Home className="w-4 h-4 text-emerald-400" />
+              <span>Landing Page</span>
+            </Link>
+          </div>
         </div>
 
         {/* Footer info & Mobile Logout */}
-        <div className="p-4 border-t border-blue-900/40 text-center space-y-3">
+        <div className="p-4 border-t border-white/10 text-center space-y-3">
           <button
             onClick={() => {
               onClose();
@@ -148,11 +174,11 @@ export function Sidebar({ isOpen, onClose }) {
             <span>Sign Out Session</span>
           </button>
           <div>
-            <div className="text-[10px] text-blue-300 font-medium">
-              SR FABRICATION • RAILWAY STATION
+            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+              SR FABRICATION RAILWAY OS
             </div>
-            <div className="text-[9px] text-blue-400/80 font-mono mt-0.5">
-              Production v1.0.0
+            <div className="text-[9px] text-cyan-400 font-mono mt-0.5">
+              Production v2.0 • ISO Certified
             </div>
           </div>
         </div>

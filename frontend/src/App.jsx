@@ -5,6 +5,7 @@ import { AppLayout } from './components/layout/AppLayout.jsx';
 import './App.css';
 
 // Pages
+import { LandingPage } from './pages/LandingPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { DashboardPage } from './pages/DashboardPage.jsx';
 import { EntryPage } from './pages/EntryPage.jsx';
@@ -44,33 +45,35 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public Route */}
+          {/* Public Landing Page & User Manual */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/manual" element={<LandingPage />} />
+
+          {/* Dedicated Login & Sign-Up Screen */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Authenticated Layout */}
+          {/* Authenticated Application Layout */}
           <Route
-            path="/"
             element={
               <ProtectedRoute>
                 <AppLayout />
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="entry" element={<EntryPage />} />
-            <Route path="exit" element={<ExitPage />} />
-            <Route path="monthly-pass" element={<MonthlyPassPage />} />
-            <Route path="tokens" element={<TokensPage />} />
-            <Route path="passes" element={<PassesPage />} />
-            <Route path="vehicles" element={<VehiclesPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/entry" element={<EntryPage />} />
+            <Route path="/exit" element={<ExitPage />} />
+            <Route path="/monthly-pass" element={<MonthlyPassPage />} />
+            <Route path="/tokens" element={<TokensPage />} />
+            <Route path="/passes" element={<PassesPage />} />
+            <Route path="/vehicles" element={<VehiclesPage />} />
 
             {/* Admin Restricted Screens */}
-            <Route path="reports" element={<AdminRoute><ReportsPage /></AdminRoute>} />
-            <Route path="tariffs" element={<AdminRoute><TariffsPage /></AdminRoute>} />
-            <Route path="operators" element={<AdminRoute><OperatorsPage /></AdminRoute>} />
-            <Route path="settings" element={<AdminRoute><SettingsPage /></AdminRoute>} />
-            <Route path="audit-logs" element={<AdminRoute><AuditLogsPage /></AdminRoute>} />
+            <Route path="/reports" element={<AdminRoute><ReportsPage /></AdminRoute>} />
+            <Route path="/tariffs" element={<AdminRoute><TariffsPage /></AdminRoute>} />
+            <Route path="/operators" element={<AdminRoute><OperatorsPage /></AdminRoute>} />
+            <Route path="/settings" element={<AdminRoute><SettingsPage /></AdminRoute>} />
+            <Route path="/audit-logs" element={<AdminRoute><AuditLogsPage /></AdminRoute>} />
           </Route>
 
           {/* 404 Catch-All */}
