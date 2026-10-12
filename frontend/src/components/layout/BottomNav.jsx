@@ -40,7 +40,7 @@ export function BottomNav({ onOpenMenu }) {
 
   return (
     <nav
-      className="whatsapp-bottom-bar fixed bottom-0 left-0 right-0 z-40 bg-[#0B1120]/95 backdrop-blur-xl border-t border-white/10 lg:hidden shadow-[0_-4px_25px_rgba(0,0,0,0.5)] safe-bottom no-print"
+      className="whatsapp-bottom-bar fixed bottom-0 left-0 right-0 z-60 bg-[#0B1120]/95 backdrop-blur-xl border-t border-white/10 lg:hidden shadow-[0_-4px_25px_rgba(0,0,0,0.5)] safe-bottom no-print"
       aria-label="Mobile Navigation"
     >
       <div className="flex items-center justify-around px-1 py-1.5 max-w-lg mx-auto">

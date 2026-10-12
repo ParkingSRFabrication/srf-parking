@@ -4,7 +4,8 @@ const tariffSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['bike', 'car', 'auto', 'bus', 'cycle', 'truck', 'tempo', 'other', 'helmet', 'locker'],
+    trim: true,
+    lowercase: true,
     index: true
   },
   name: {
@@ -30,6 +31,11 @@ const tariffSchema = new mongoose.Schema({
     default: 0
   },
   hourlyAmount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  monthlyAmount: {
     type: Number,
     default: 0,
     min: 0

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   CreditCard,
   Calendar,
@@ -10,18 +10,19 @@ import {
   Car
 } from 'lucide-react';
 import { api, getErrorMessage } from '../services/api.js';
-import { formatCurrency, formatDate, normalizeVehicleNumber, CATEGORY_LABELS } from '../utils/formatters.js';
+import { formatCurrency, formatDate, normalizeVehicleNumber, CATEGORY_LABELS, formatCategoryName } from '../utils/formatters.js';
 import { ReceiptModal } from '../components/common/ReceiptModal.jsx';
 import './MonthlyPassPage.css';
 
 export function MonthlyPassPage() {
+  const [tariffs, setTariffs] = useState([]);
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [vehicleType, setVehicleType] = useState('bike');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [durationMonths, setDurationMonths] = useState(1);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [amount, setAmount] = useState(300);
+  const [amount, setAmount] = useState(200);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
   const [paymentReference, setPaymentReference] = useState('');
   const [notes, setNotes] = useState('');
@@ -33,18 +34,73 @@ export function MonthlyPassPage() {
   const [createdPass, setCreatedPass] = useState(null);
   const [showReceipt, setShowReceipt] = useState(false);
 
+  // Helper to get base monthly rate for category
+  const getBaseMonthlyRate = (type, tariffList = tariffs) => {
+    const t = tariffList.find(item => item.category === type && item.isActive);
+    if (t && Number(t.monthlyAmount) > 0) return Number(t.monthlyAmount);
+    // Defaults requested by user
+    if (type === 'bike') return 200;
+    if (type === 'car') return 400;
+    if (type === 'lorry' || type === 'jcb' || type === 'bus') return 700;
+    if (type === 'truck') return 800;
+    if (type === 'auto') return 300;
+    if (type === 'cycle') return 100;
+    return 300;
+  };
+
+  // Fetch active tariffs
+  useEffect(() => {
+    api.get('/tariffs')
+      .then(res => {
+        if (res.data?.success && res.data?.tariffs) {
+          const activeList = res.data.tariffs.filter(t => t.isActive);
+          setTariffs(activeList);
+          // Auto calculate initial rate
+          const rate = getBaseMonthlyRate(vehicleType, activeList);
+          setAmount(rate * durationMonths);
+        }
+      })
+      .catch(err => console.error('Error fetching tariffs for monthly pass:', err));
+  }, []);
+
   // Suggested rates when duration or type changes
   const handleDurationChange = (months) => {
     setDurationMonths(months);
-    const baseMonthRate = vehicleType === 'car' ? 600 : vehicleType === 'auto' ? 450 : 300;
+    const baseMonthRate = getBaseMonthlyRate(vehicleType);
     setAmount(baseMonthRate * months);
   };
 
   const handleTypeChange = (type) => {
     setVehicleType(type);
-    const baseMonthRate = type === 'car' ? 600 : type === 'auto' ? 450 : 300;
+    const baseMonthRate = getBaseMonthlyRate(type);
     setAmount(baseMonthRate * durationMonths);
   };
+
+  // Available vehicle categories list (combining active tariffs and standard categories)
+  const availableCategories = useMemo(() => {
+    const map = new Map();
+    // Add active tariffs first
+    tariffs.forEach(t => {
+      if (t.category !== 'helmet' && t.category !== 'locker') {
+        map.set(t.category, {
+          key: t.category,
+          label: formatCategoryName(t.category),
+          monthlyRate: t.monthlyAmount || getBaseMonthlyRate(t.category)
+        });
+      }
+    });
+    // Add default fallbacks
+    Object.keys(CATEGORY_LABELS).forEach(k => {
+      if (k !== 'helmet' && k !== 'locker' && !map.has(k)) {
+        map.set(k, {
+          key: k,
+          label: CATEGORY_LABELS[k],
+          monthlyRate: getBaseMonthlyRate(k)
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [tariffs]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -175,8 +231,10 @@ export function MonthlyPassPage() {
                 onChange={(e) => handleTypeChange(e.target.value)}
                 className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition capitalize"
               >
-                {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
-                  <option key={k} value={k}>{v}</option>
+                {availableCategories.map(cat => (
+                  <option key={cat.key} value={cat.key}>
+                    {cat.label} (₹{cat.monthlyRate}/mo)
+                  </option>
                 ))}
               </select>
             </div>

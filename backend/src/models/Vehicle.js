@@ -11,8 +11,9 @@ const vehicleSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['bike', 'car', 'auto', 'bus', 'cycle', 'truck', 'tempo', 'other', 'helmet', 'locker'],
     default: 'bike',
+    trim: true,
+    lowercase: true,
     index: true
   },
   ownerName: {

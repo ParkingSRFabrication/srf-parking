@@ -59,10 +59,12 @@ async function seedDatabase() {
       categories: [
         { id: 'bike', name: 'Two Wheeler (Bike / Scooter)', enabled: true, isVehicle: true },
         { id: 'car', name: 'Four Wheeler (Car / SUV)', enabled: true, isVehicle: true },
+        { id: 'lorry', name: 'Lorry / Goods Carrier', enabled: true, isVehicle: true },
+        { id: 'jcb', name: 'JCB / Earthmover', enabled: true, isVehicle: true },
+        { id: 'bus', name: 'Bus / Van', enabled: true, isVehicle: true },
+        { id: 'truck', name: 'Big Vehicles / Heavy Truck', enabled: true, isVehicle: true },
         { id: 'auto', name: 'Auto Rickshaw', enabled: true, isVehicle: true },
         { id: 'cycle', name: 'Bicycle', enabled: true, isVehicle: true },
-        { id: 'bus', name: 'Bus / Van', enabled: true, isVehicle: true },
-        { id: 'truck', name: 'Truck', enabled: true, isVehicle: true },
         { id: 'tempo', name: 'Tempo / Carrier', enabled: true, isVehicle: true },
         { id: 'other', name: 'Other Vehicles', enabled: true, isVehicle: true },
         { id: 'helmet', name: 'Helmet Deposit', enabled: true, isVehicle: false },
@@ -134,18 +136,20 @@ async function seedDatabase() {
       isActive: true
     });
 
-    // 4. Default Tariffs
+    // 4. Default Tariffs (Updated per Owner Rates)
     const tariffsData = [
-      { category: 'bike', name: 'Two Wheeler 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 20, additionalDayAmount: 20 },
-      { category: 'car', name: 'Four Wheeler 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 50, additionalDayAmount: 40 },
-      { category: 'auto', name: 'Auto Rickshaw Daily', billingMethod: '24_hour_daily', firstSlabAmount: 30, additionalDayAmount: 30 },
-      { category: 'cycle', name: 'Bicycle Daily', billingMethod: '24_hour_daily', firstSlabAmount: 10, additionalDayAmount: 10 },
-      { category: 'bus', name: 'Bus 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 100, additionalDayAmount: 100 },
-      { category: 'truck', name: 'Truck 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 120, additionalDayAmount: 120 },
-      { category: 'tempo', name: 'Tempo 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 70, additionalDayAmount: 60 },
-      { category: 'other', name: 'Other Vehicles Daily', billingMethod: '24_hour_daily', firstSlabAmount: 50, additionalDayAmount: 50 },
-      { category: 'helmet', name: 'Helmet Fixed Charge', billingMethod: 'fixed', firstSlabAmount: 15, additionalDayAmount: 0 },
-      { category: 'locker', name: 'Locker Hourly Charge', billingMethod: 'hourly', firstSlabAmount: 20, hourlyAmount: 10 }
+      { category: 'bike', name: 'Two Wheeler 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 20, additionalDayAmount: 20, monthlyAmount: 200 },
+      { category: 'car', name: 'Four Wheeler 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 40, additionalDayAmount: 40, monthlyAmount: 400 },
+      { category: 'lorry', name: 'Lorry / Goods Carrier 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 70, additionalDayAmount: 70, monthlyAmount: 700 },
+      { category: 'jcb', name: 'JCB / Earthmover 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 70, additionalDayAmount: 70, monthlyAmount: 700 },
+      { category: 'bus', name: 'Bus 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 70, additionalDayAmount: 70, monthlyAmount: 700 },
+      { category: 'truck', name: 'Big Vehicles / Heavy Truck 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 70, additionalDayAmount: 70, monthlyAmount: 800 },
+      { category: 'auto', name: 'Auto Rickshaw Daily', billingMethod: '24_hour_daily', firstSlabAmount: 30, additionalDayAmount: 30, monthlyAmount: 300 },
+      { category: 'cycle', name: 'Bicycle Daily', billingMethod: '24_hour_daily', firstSlabAmount: 10, additionalDayAmount: 10, monthlyAmount: 100 },
+      { category: 'tempo', name: 'Tempo 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 70, additionalDayAmount: 60, monthlyAmount: 500 },
+      { category: 'other', name: 'Other Vehicles Daily', billingMethod: '24_hour_daily', firstSlabAmount: 50, additionalDayAmount: 50, monthlyAmount: 500 },
+      { category: 'helmet', name: 'Helmet Fixed Charge', billingMethod: 'fixed', firstSlabAmount: 15, additionalDayAmount: 0, monthlyAmount: 0 },
+      { category: 'locker', name: 'Locker Hourly Charge', billingMethod: 'hourly', firstSlabAmount: 20, hourlyAmount: 10, monthlyAmount: 0 }
     ];
 
     const tariffs = await Tariff.insertMany(

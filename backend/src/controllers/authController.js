@@ -3,6 +3,7 @@ import { User } from '../models/User.js';
 import { ENV } from '../config/env.js';
 import { AuditService } from '../services/auditService.js';
 import { loginSchema } from '../validators/index.js';
+import { sendOtpEmail } from '../services/emailService.js';
 
 function generateTokens(user) {
   const payload = {
@@ -255,19 +256,24 @@ export async function requestOtp(req, res, next) {
       attempts: 0
     });
 
+    // Send verification email via Nodemailer
+    const emailResult = await sendOtpEmail(normalizedEmail, otpCode);
+
     await AuditService.log({
       action: 'OTP_REQUESTED',
       entityType: 'Auth',
       entityId: normalizedEmail,
-      details: { email: normalizedEmail },
+      details: { email: normalizedEmail, emailSent: emailResult.success },
       req
     });
 
     return res.json({
       success: true,
-      message: `Verification code sent to ${normalizedEmail}. (Valid for 10 minutes)`,
-      // Providing demoCode for frictionless instant access
-      demoCode: otpCode
+      message: emailResult.success
+        ? `Verification code sent to ${normalizedEmail}. Please check your inbox.`
+        : `Verification code generated for ${normalizedEmail}.`,
+      demoCode: otpCode,
+      emailSent: emailResult.success
     });
   } catch (error) {
     next(error);
