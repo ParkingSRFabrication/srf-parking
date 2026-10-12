@@ -19,8 +19,10 @@ const parkingTokenSchema = new mongoose.Schema({
   vehicleType: {
     type: String,
     required: true,
-    enum: ['bike', 'car', 'auto', 'bus', 'cycle', 'truck', 'tempo', 'other', 'helmet', 'locker'],
-    default: 'bike'
+    default: 'bike',
+    trim: true,
+    lowercase: true,
+    index: true
   },
   customerPhone: {
     type: String,

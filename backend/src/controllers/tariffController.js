@@ -86,7 +86,6 @@ export async function updateTariff(req, res, next) {
 
     return res.json({
       success: true,
-      message: 'Tariff updated successfully',
       tariff
     });
   } catch (error) {
@@ -115,3 +114,37 @@ export async function previewTariffCalculation(req, res, next) {
     next(error);
   }
 }
+
+export async function deleteTariff(req, res, next) {
+  try {
+    const { id } = req.params;
+    const tariff = await Tariff.findById(id);
+    if (!tariff) {
+      return res.status(404).json({ success: false, message: 'Tariff not found' });
+    }
+
+    await Tariff.findByIdAndDelete(id);
+
+    await AuditService.log({
+      actor: req.user._id,
+      actorName: req.user.name,
+      actorRole: req.user.role,
+      action: 'TARIFF_DELETED',
+      entityType: 'Tariff',
+      entityId: id,
+      details: {
+        category: tariff.category,
+        name: tariff.name
+      },
+      req
+    });
+
+    return res.json({
+      success: true,
+      message: 'Tariff deleted successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+

@@ -5,7 +5,7 @@ export function BrandLogo({ size = 'default', showSubtitle = true, inverted = fa
   const isSmall = size === 'small';
 
   return (
-    <div className="flex items-center gap-3 select-none">
+    <div className="flex items-center gap-2.5 sm:gap-3 select-none min-w-0">
       {/* Brand Icon Mark */}
       <div className={`relative flex items-center justify-center rounded-2xl font-black shadow-lg transition-transform hover:scale-105 shrink-0 ${
         isLarge ? 'w-12 h-12 text-xl' : isSmall ? 'w-8 h-8 text-xs' : 'w-10 h-10 text-sm'
@@ -19,19 +19,19 @@ export function BrandLogo({ size = 'default', showSubtitle = true, inverted = fa
       </div>
 
       {/* Brand Typography */}
-      <div className="min-w-0">
-        <div className={`font-outfit font-black tracking-tight leading-none ${
+      <div className="min-w-0 flex-1 overflow-hidden">
+        <div className={`font-outfit font-black tracking-tight leading-none truncate ${
           isLarge ? 'text-2xl' : isSmall ? 'text-base' : 'text-lg'
         } ${inverted ? 'text-white' : 'text-slate-100'}`}>
           SR FABRICATION
         </div>
         {showSubtitle && (
-          <div className={`font-mono uppercase tracking-wider leading-tight mt-1 truncate ${
+          <div className={`font-mono uppercase tracking-wider leading-tight mt-1 ${
             isLarge ? 'text-[11px]' : 'text-[9px]'
-          } text-cyan-400 font-semibold flex items-center gap-1.5`}>
-            <span>RAILWAY PARKING MANAGEMENT SYSTEM</span>
-            <span className="text-slate-600">•</span>
-            <span className="text-emerald-400">LIVE</span>
+          } text-cyan-400 font-semibold flex items-center gap-1 min-w-0 max-w-full overflow-hidden`}>
+            <span className="truncate min-w-0">RAILWAY PARKING MANAGEMENT SYSTEM</span>
+            <span className="text-slate-600 shrink-0">•</span>
+            <span className="text-emerald-400 shrink-0 font-bold">LIVE</span>
           </div>
         )}
       </div>

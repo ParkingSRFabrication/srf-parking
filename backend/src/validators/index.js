@@ -15,7 +15,7 @@ export const entryTokenSchema = z.object({
     .max(20, 'Vehicle number cannot exceed 20 characters')
     .trim()
     .transform(v => v.toUpperCase().replace(/\s+/g, '')),
-  vehicleType: z.enum(['bike', 'car', 'auto', 'bus', 'cycle', 'truck', 'tempo', 'other', 'helmet', 'locker']),
+  vehicleType: z.string().min(1, 'Vehicle type is required').trim().toLowerCase(),
   customerPhone: z.string().max(15).optional().default(''),
   notes: z.string().max(250).optional().default(''),
   locationCode: z.string().optional()
@@ -37,7 +37,7 @@ export const createPassSchema = z.object({
     .max(20)
     .trim()
     .transform(v => v.toUpperCase().replace(/\s+/g, '')),
-  vehicleType: z.enum(['bike', 'car', 'auto', 'bus', 'cycle', 'truck', 'tempo', 'other', 'helmet', 'locker']),
+  vehicleType: z.string().min(1, 'Vehicle type is required').trim().toLowerCase(),
   customerName: z.string().min(2, 'Customer name is required').trim(),
   customerPhone: z.string().max(15).optional().default(''),
   durationMonths: z.coerce.number().refine(val => [1, 6, 12].includes(val), {
@@ -60,12 +60,13 @@ export const renewPassSchema = z.object({
 });
 
 export const tariffSchema = z.object({
-  category: z.enum(['bike', 'car', 'auto', 'bus', 'cycle', 'truck', 'tempo', 'other', 'helmet', 'locker']),
+  category: z.string().min(1, 'Category is required').trim().toLowerCase(),
   name: z.string().min(2, 'Tariff name is required').trim(),
-  billingMethod: z.enum(['24_hour_daily', 'hourly', 'fixed']),
+  billingMethod: z.enum(['24_hour_daily', 'hourly', 'fixed']).default('24_hour_daily'),
   firstSlabAmount: z.coerce.number().min(0, 'First slab amount must be non-negative'),
   additionalDayAmount: z.coerce.number().min(0).default(0),
   hourlyAmount: z.coerce.number().min(0).default(0),
+  monthlyAmount: z.coerce.number().min(0).default(0),
   freeGraceMinutes: z.coerce.number().min(0).default(0),
   effectiveFrom: z.string().or(z.date()).optional(),
   isActive: z.boolean().default(true)

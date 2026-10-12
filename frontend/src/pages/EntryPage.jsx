@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Bike,
   Car,
@@ -16,26 +16,78 @@ import {
 } from 'lucide-react';
 import { api, getErrorMessage } from '../services/api.js';
 import { ReceiptModal } from '../components/common/ReceiptModal.jsx';
-import { normalizeVehicleNumber } from '../utils/formatters.js';
+import { normalizeVehicleNumber, formatCurrency, formatCategoryName } from '../utils/formatters.js';
 import './EntryPage.css';
 
-const VEHICLE_CATEGORIES = [
+const DEFAULT_CATEGORIES = [
   { id: 'bike', label: 'Two Wheeler', sub: 'Bike / Scooter', icon: Bike, badge: '₹20' },
-  { id: 'car', label: 'Four Wheeler', sub: 'Car / Sedan / SUV', icon: Car, badge: '₹50' },
+  { id: 'car', label: 'Four Wheeler', sub: 'Car / Sedan / SUV', icon: Car, badge: '₹40' },
+  { id: 'lorry', label: 'Lorry', sub: 'Goods Carrier', icon: Truck, badge: '₹70' },
+  { id: 'jcb', label: 'JCB', sub: 'Earthmover Heavy', icon: Truck, badge: '₹70' },
+  { id: 'bus', label: 'Bus / Van', sub: 'Heavy Passenger', icon: Bus, badge: '₹70' },
+  { id: 'truck', label: 'Big Vehicles', sub: 'Heavy Truck', icon: Truck, badge: '₹70' },
   { id: 'auto', label: 'Auto Rickshaw', sub: 'Three Wheeler', icon: Compass, badge: '₹30' },
   { id: 'cycle', label: 'Bicycle', sub: 'Pedal Cycle', icon: Bike, badge: '₹10' },
-  { id: 'bus', label: 'Bus / Van', sub: 'Heavy Passenger', icon: Bus, badge: '₹100' },
-  { id: 'truck', label: 'Commercial Truck', sub: 'Heavy Goods', icon: Truck, badge: '₹150' },
-  { id: 'tempo', label: 'Tempo / Carrier', sub: 'Light Goods', icon: Truck, badge: '₹80' },
-  { id: 'helmet', label: 'Helmet Deposit', sub: 'Cloakroom Locker', icon: HardHat, badge: '₹10' },
-  { id: 'locker', label: 'Locker Deposit', sub: 'Luggage Storage', icon: Package, badge: '₹30' },
+  { id: 'tempo', label: 'Tempo / Carrier', sub: 'Light Goods', icon: Truck, badge: '₹70' },
+  { id: 'helmet', label: 'Helmet Deposit', sub: 'Cloakroom Locker', icon: HardHat, badge: '₹15' },
+  { id: 'locker', label: 'Locker Deposit', sub: 'Luggage Storage', icon: Package, badge: '₹20' },
 ];
 
+function getCategoryIcon(id) {
+  const key = String(id).toLowerCase();
+  if (key.includes('bike') || key.includes('scooter') || key.includes('cycle')) return Bike;
+  if (key.includes('car') || key.includes('sedan') || key.includes('suv')) return Car;
+  if (key.includes('bus') || key.includes('van')) return Bus;
+  if (key.includes('truck') || key.includes('lorry') || key.includes('tempo') || key.includes('jcb') || key.includes('trailer')) return Truck;
+  if (key.includes('helmet')) return HardHat;
+  if (key.includes('locker')) return Package;
+  if (key.includes('auto')) return Compass;
+  return Truck;
+}
+
 export function EntryPage() {
+  const [tariffs, setTariffs] = useState([]);
   const [vehicleType, setVehicleType] = useState('bike');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [notes, setNotes] = useState('');
+
+  // Fetch active tariffs on mount to show live owner-configured rates & custom vehicles
+  useEffect(() => {
+    api.get('/tariffs')
+      .then(res => {
+        if (res.data?.success && res.data?.tariffs) {
+          setTariffs(res.data.tariffs.filter(t => t.isActive));
+        }
+      })
+      .catch(err => console.error('Error fetching tariffs for entry:', err));
+  }, []);
+
+  // Compute dynamic vehicle categories merging live tariffs and defaults
+  const vehicleCategories = useMemo(() => {
+    if (!tariffs.length) return DEFAULT_CATEGORIES;
+
+    const map = new Map();
+    // 1. Add all active tariffs configured by the parking owner
+    tariffs.forEach(t => {
+      map.set(t.category, {
+        id: t.category,
+        label: formatCategoryName(t.category),
+        sub: t.name,
+        icon: getCategoryIcon(t.category),
+        badge: formatCurrency(t.firstSlabAmount)
+      });
+    });
+
+    // 2. Add any default not yet added
+    DEFAULT_CATEGORIES.forEach(def => {
+      if (!map.has(def.id)) {
+        map.set(def.id, def);
+      }
+    });
+
+    return Array.from(map.values());
+  }, [tariffs]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -136,7 +188,7 @@ export function EntryPage() {
               1. Select Vehicle / Item Category
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-2.5">
-              {VEHICLE_CATEGORIES.map((cat) => {
+              {vehicleCategories.map((cat) => {
                 const Icon = cat.icon;
                 const isSelected = vehicleType === cat.id;
                 return (

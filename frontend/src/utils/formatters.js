@@ -90,9 +90,21 @@ export const CATEGORY_LABELS = {
   auto: 'Auto Rickshaw',
   cycle: 'Bicycle',
   bus: 'Bus / Van',
-  truck: 'Heavy Truck',
+  lorry: 'Lorry / Goods Carrier',
+  jcb: 'JCB / Earthmover',
+  truck: 'Big Vehicles (Heavy Truck)',
   tempo: 'Tempo Carrier',
   other: 'Other Vehicle',
   helmet: 'Helmet Deposit',
   locker: 'Luggage / Locker'
 };
+
+export function formatCategoryName(category) {
+  if (!category) return '-';
+  const key = String(category).toLowerCase().trim();
+  if (CATEGORY_LABELS[key]) return CATEGORY_LABELS[key];
+  return key
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
+

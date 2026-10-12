@@ -3,6 +3,7 @@ import {
   getTariffs,
   createTariff,
   updateTariff,
+  deleteTariff,
   previewTariffCalculation
 } from '../controllers/tariffController.js';
 import { authenticate, requireAdmin } from '../middleware/auth.js';
@@ -15,5 +16,6 @@ router.get('/', getTariffs);
 router.post('/preview', previewTariffCalculation);
 router.post('/', requireAdmin, createTariff);
 router.patch('/:id', requireAdmin, updateTariff);
+router.delete('/:id', requireAdmin, deleteTariff);
 
 export default router;

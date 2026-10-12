@@ -63,12 +63,14 @@ export function Sidebar({ isOpen, onClose }) {
         aria-label="Navigation Sidebar"
       >
         {/* Brand Header */}
-        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10">
-          <BrandLogo inverted={true} />
+        <div className="flex items-center justify-between gap-2 p-4 sm:p-5 border-b border-white/10 min-w-0">
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <BrandLogo inverted={true} />
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-xl lg:hidden hover:bg-white/10 active:scale-95 transition min-w-[38px] min-h-[38px] flex items-center justify-center"
+            className="p-1.5 text-slate-400 hover:text-white rounded-xl lg:hidden hover:bg-white/10 active:scale-95 transition min-w-[36px] min-h-[36px] flex items-center justify-center shrink-0"
             aria-label="Close navigation sidebar"
           >
             <X className="w-5 h-5 text-slate-300" />
