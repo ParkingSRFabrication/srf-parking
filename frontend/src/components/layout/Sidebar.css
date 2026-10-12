@@ -2,3 +2,41 @@
 .sidebar-glow {
   box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
 }
+
+/* Mobile Sidebar Drawer Styling */
+.mobile-sidebar-drawer {
+  z-index: 80 !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 1023px) {
+  .mobile-sidebar-drawer.drawer-open {
+    transform: translateX(0) !important;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(99, 102, 241, 0.3) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .mobile-sidebar-drawer.drawer-closed {
+    transform: translateX(-100%) !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Mobile Sidebar Backdrop */
+.mobile-sidebar-backdrop {
+  z-index: 70 !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  animation: fadeInSidebarBackdrop 0.2s ease-out forwards;
+}
+
+@keyframes fadeInSidebarBackdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

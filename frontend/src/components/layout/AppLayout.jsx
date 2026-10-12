@@ -16,7 +16,7 @@ export function AppLayout() {
     <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col antialiased selection:bg-indigo-600 selection:text-white">
       {/* Mobile PWA Install Floating Banner */}
       {!isInstalled && !dismissInstallBanner && (canInstall || isIOS) && (
-        <div className="lg:hidden sticky top-0 z-50 bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900 border-b border-indigo-500/30 px-3.5 py-2 flex items-center justify-between text-xs shadow-lg">
+        <div className="lg:hidden relative z-20 bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900 border-b border-indigo-500/30 px-3.5 py-2 flex items-center justify-between text-xs shadow-lg">
           <div className="flex items-center gap-2">
             <Smartphone className="w-4 h-4 text-emerald-400 shrink-0 animate-bounce" />
             <span className="text-white font-medium text-[11px]">
