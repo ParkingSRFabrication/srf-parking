@@ -21,8 +21,9 @@ export function Navbar({ onToggleSidebar }) {
       {/* Left: Mobile menu toggle & station indicator */}
       <div className="flex items-center gap-2 sm:gap-3">
         <button
+          type="button"
           onClick={onToggleSidebar}
-          className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 lg:hidden focus:outline-none transition"
+          className="p-2 text-cyan-400 hover:text-white rounded-xl hover:bg-white/10 active:scale-95 lg:hidden focus:outline-none transition flex items-center justify-center min-w-[42px] min-h-[42px] touch-manipulation"
           aria-label="Toggle navigation drawer"
         >
           <Menu className="w-5 h-5 sm:w-6 sm:h-6" />

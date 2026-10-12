@@ -1,4 +1,16 @@
-/* BottomNav styles */
-.bottom-nav-root {
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+/* WhatsApp-style Mobile Bottom Navigation */
+.whatsapp-bottom-bar {
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.whatsapp-nav-item {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.whatsapp-icon-pill {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
