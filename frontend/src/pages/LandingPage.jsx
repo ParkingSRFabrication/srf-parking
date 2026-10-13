@@ -33,7 +33,9 @@ import {
   Check,
   Share2,
   Lock,
-  X
+  X,
+  Menu,
+  ArrowUp
 } from 'lucide-react';
 import { BrandLogo } from '../components/common/BrandLogo.jsx';
 import { GoogleAccountPickerModal } from '../components/common/GoogleAccountPickerModal.jsx';
@@ -50,6 +52,28 @@ export function LandingPage() {
   // Navigation & Active manual persona
   const [activeManualTab, setActiveManualTab] = useState('operator'); // 'operator' | 'admin' | 'commuter' | 'hardware'
   const [activeFaq, setActiveFaq] = useState(null);
+
+  // Responsive mobile menu & scroll-to-top state
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Auth Modal State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -241,58 +265,57 @@ export function LandingPage() {
       <div className="fixed bottom-10 left-10 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       {/* TOP FLOATING LUXURY NAVBAR */}
-      <header className="sticky top-0 z-40 bg-[#090D16]/85 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-3.5 transition-all">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-3">
-            <BrandLogo size="default" inverted={true} />
+      <header className="sticky top-0 z-40 bg-[#090D16]/90 backdrop-blur-xl border-b border-white/10 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 transition-all">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 min-w-0" onClick={() => setMobileMenuOpen(false)}>
+            <BrandLogo size="default" inverted={true} subtitleClassName="hidden sm:flex" />
           </Link>
 
-          {/* Center Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-300">
-            <a href="#manual" className="hover:text-cyan-400 transition flex items-center gap-1.5">
+          {/* Center Navigation Links (Desktop lg+) */}
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-7 text-xs font-semibold text-slate-300">
+            <a href="#manual" className="hover:text-cyan-400 transition flex items-center gap-1.5 py-1">
               <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
               <span>User Manual</span>
             </a>
-            <a href="#simulator" className="hover:text-indigo-400 transition flex items-center gap-1.5">
+            <a href="#simulator" className="hover:text-indigo-400 transition flex items-center gap-1.5 py-1">
               <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
               <span>Live Terminal Simulator</span>
             </a>
-            <a href="#features" className="hover:text-emerald-400 transition flex items-center gap-1.5">
+            <a href="#features" className="hover:text-emerald-400 transition flex items-center gap-1.5 py-1">
               <Zap className="w-3.5 h-3.5 text-emerald-400" />
               <span>Features</span>
             </a>
-            <a href="#tariffs" className="hover:text-amber-400 transition flex items-center gap-1.5">
+            <a href="#tariffs" className="hover:text-amber-400 transition flex items-center gap-1.5 py-1">
               <Layers className="w-3.5 h-3.5 text-amber-400" />
               <span>Tariff Rates</span>
             </a>
-            <a href="#install-pwa" className="hover:text-purple-400 transition flex items-center gap-1.5">
+            <a href="#install-pwa" className="hover:text-purple-400 transition flex items-center gap-1.5 py-1">
               <Smartphone className="w-3.5 h-3.5 text-purple-400" />
               <span>Mobile PWA App</span>
             </a>
-            <a href="#faq" className="hover:text-slate-100 transition">
+            <a href="#faq" className="hover:text-slate-100 transition py-1">
               FAQ
             </a>
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {/* Install PWA Mobile Button */}
             <button
               onClick={handleInstallClick}
-              className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold transition shadow-xs"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold transition shadow-xs"
               title="Install Web App on your phone"
             >
               <Download className="w-3.5 h-3.5 text-emerald-400 animate-bounce" />
-              <span className="hidden sm:inline">Install App</span>
-              <span className="sm:hidden">Install</span>
+              <span>Install App</span>
             </button>
 
             {isAuthenticated ? (
               <Link
                 to="/dashboard"
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-bold shadow-glow transition"
+                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-bold shadow-glow transition"
               >
-                <span>Open Terminal</span>
+                <span>Terminal</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             ) : (
@@ -303,7 +326,7 @@ export function LandingPage() {
                     setAuthSubmode('login');
                     setAuthModalOpen(true);
                   }}
-                  className="px-3.5 py-2 text-xs font-bold text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition"
+                  className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs font-bold text-slate-200 hover:text-white hover:bg-white/5 rounded-xl transition"
                 >
                   Sign In
                 </button>
@@ -313,47 +336,155 @@ export function LandingPage() {
                     setAuthSubmode('signup');
                     setAuthModalOpen(true);
                   }}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-600 via-indigo-500 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-bold shadow-glow transition transform active:scale-95"
+                  className="hidden xs:flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-indigo-600 via-indigo-500 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-bold shadow-glow transition transform active:scale-95"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
                   <span>Free Sign Up</span>
                 </button>
               </>
             )}
+
+            {/* Mobile Hamburger Menu Toggle Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+              className="lg:hidden p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* MOBILE NAVIGATION DRAWER */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden mt-2.5 pt-3 border-t border-white/10 animate-slide-down space-y-3 pb-1">
+            <nav className="grid grid-cols-2 gap-2 text-xs font-semibold">
+              <a
+                href="#manual"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 p-2.5 bg-slate-900/80 hover:bg-slate-800 rounded-xl text-slate-200 border border-white/5 transition"
+              >
+                <BookOpen className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span className="truncate">User Manual</span>
+              </a>
+              <a
+                href="#simulator"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 p-2.5 bg-slate-900/80 hover:bg-slate-800 rounded-xl text-slate-200 border border-white/5 transition"
+              >
+                <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
+                <span className="truncate">Live Simulator</span>
+              </a>
+              <a
+                href="#features"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 p-2.5 bg-slate-900/80 hover:bg-slate-800 rounded-xl text-slate-200 border border-white/5 transition"
+              >
+                <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="truncate">Core Features</span>
+              </a>
+              <a
+                href="#tariffs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 p-2.5 bg-slate-900/80 hover:bg-slate-800 rounded-xl text-slate-200 border border-white/5 transition"
+              >
+                <Layers className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="truncate">Tariff Rates</span>
+              </a>
+              <a
+                href="#install-pwa"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 p-2.5 bg-slate-900/80 hover:bg-slate-800 rounded-xl text-slate-200 border border-white/5 transition"
+              >
+                <Smartphone className="w-4 h-4 text-purple-400 shrink-0" />
+                <span className="truncate">Mobile PWA App</span>
+              </a>
+              <a
+                href="#faq"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 p-2.5 bg-slate-900/80 hover:bg-slate-800 rounded-xl text-slate-200 border border-white/5 transition"
+              >
+                <HelpCircle className="w-4 h-4 text-slate-400 shrink-0" />
+                <span className="truncate">FAQ</span>
+              </a>
+            </nav>
+
+            {/* Mobile Drawer Quick Action Buttons */}
+            <div className="pt-1 flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleInstallClick();
+                }}
+                className="w-full py-2.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition hover:from-emerald-500/30 hover:to-teal-500/30"
+              >
+                <Download className="w-4 h-4 text-emerald-400" />
+                <span>Install Application on Mobile Device</span>
+              </button>
+
+              {!isAuthenticated && (
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setAuthTab('otp');
+                      setAuthSubmode('signup');
+                      setAuthModalOpen(true);
+                    }}
+                    className="py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-1.5 transition"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+                    <span>Free Sign Up</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setAuthTab('operator');
+                      setAuthModalOpen(true);
+                    }}
+                    className="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Booth Staff</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </header>
 
       {/* HERO SECTION */}
-      <section className="relative pt-12 pb-20 px-4 sm:px-8 overflow-hidden">
+      <section className="relative pt-8 sm:pt-14 pb-12 sm:pb-20 px-3 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Hero Left Content */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-center lg:text-left">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-xs font-semibold text-indigo-300">
-                <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>SR FABRICATION • INDIAN RAILWAYS COMPLIANT VEHICLE SYSTEM</span>
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[10px] sm:text-xs font-semibold text-indigo-300 max-w-full">
+                <span className="flex h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="truncate sm:whitespace-normal">SR FABRICATION • INDIAN RAILWAYS COMPLIANT VEHICLE SYSTEM</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-outfit tracking-tight leading-[1.1] text-white">
+              <h1 className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-black font-outfit tracking-tight leading-[1.15] sm:leading-[1.1] text-white">
                 Next-Gen Smart <br />
                 <span className="gradient-text-accent">Railway Parking</span> OS & Mobile App
               </h1>
 
               {/* Description */}
-              <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed mx-auto lg:mx-0">
+              <p className="text-xs sm:text-base text-slate-300 max-w-2xl leading-relaxed mx-auto lg:mx-0">
                 A high-throughput, mission-critical parking system designed for Indian Railway stations.
                 Issue QR tokens in under <strong>2 seconds</strong>, automate multi-tier tariffs, manage digital monthly passes, and prevent revenue leakage with tamper-proof real-time audit trails.
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-2.5 sm:gap-3.5 pt-2">
                 {isAuthenticated ? (
                   <Link
                     to="/dashboard"
-                    className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-2xl text-sm font-black shadow-glow flex items-center justify-center gap-2.5 transition transform active:scale-95"
+                    className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-2xl text-xs sm:text-sm font-black shadow-glow flex items-center justify-center gap-2.5 transition transform active:scale-95"
                   >
                     <span>Launch Parking Console</span>
                     <ArrowRight className="w-4 h-4" />
@@ -365,7 +496,7 @@ export function LandingPage() {
                       setAuthSubmode('signup');
                       setAuthModalOpen(true);
                     }}
-                    className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-2xl text-sm font-black shadow-glow flex items-center justify-center gap-2.5 transition transform active:scale-95"
+                    className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-2xl text-xs sm:text-sm font-black shadow-glow flex items-center justify-center gap-2.5 transition transform active:scale-95"
                   >
                     <Sparkles className="w-4 h-4 text-cyan-300" />
                     <span>Get Free Access with Gmail</span>
@@ -374,7 +505,7 @@ export function LandingPage() {
 
                 <button
                   onClick={handleInstallClick}
-                  className="w-full sm:w-auto px-6 py-3.5 bg-slate-800/80 hover:bg-slate-700/80 text-white border border-white/10 rounded-2xl text-sm font-bold flex items-center justify-center gap-2.5 transition backdrop-blur-md"
+                  className="w-full sm:w-auto px-5 sm:px-6 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-700/80 text-white border border-white/10 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition backdrop-blur-md"
                 >
                   <Smartphone className="w-4 h-4 text-emerald-400" />
                   <span>Install as Mobile App</span>
@@ -382,7 +513,7 @@ export function LandingPage() {
 
                 <a
                   href="#manual"
-                  className="w-full sm:w-auto px-5 py-3.5 text-slate-300 hover:text-white rounded-2xl text-sm font-semibold flex items-center justify-center gap-1.5 transition"
+                  className="w-full sm:w-auto px-4 sm:px-5 py-3 sm:py-3.5 text-slate-300 hover:text-white rounded-2xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition"
                 >
                   <BookOpen className="w-4 h-4 text-cyan-400" />
                   <span>User Manuals</span>
@@ -390,61 +521,61 @@ export function LandingPage() {
               </div>
 
               {/* Live Metric Tickers */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-white/10">
-                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
-                  <div className="text-xl sm:text-2xl font-black font-mono text-cyan-400">&lt; 1.8s</div>
-                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">Token Issuing Speed</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 pt-5 sm:pt-6 border-t border-white/10">
+                <div className="p-2.5 sm:p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
+                  <div className="text-lg sm:text-2xl font-black font-mono text-cyan-400">&lt; 1.8s</div>
+                  <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium mt-0.5">Token Issuing Speed</div>
                 </div>
-                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
-                  <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400">99.98%</div>
-                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">Station Gate Uptime</div>
+                <div className="p-2.5 sm:p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
+                  <div className="text-lg sm:text-2xl font-black font-mono text-emerald-400">99.98%</div>
+                  <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium mt-0.5">Station Gate Uptime</div>
                 </div>
-                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
-                  <div className="text-xl sm:text-2xl font-black font-mono text-indigo-400">50,000+</div>
-                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">Daily Railway Commuters</div>
+                <div className="p-2.5 sm:p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
+                  <div className="text-lg sm:text-2xl font-black font-mono text-indigo-400">50,000+</div>
+                  <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium mt-0.5">Daily Commuters</div>
                 </div>
-                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
-                  <div className="text-xl sm:text-2xl font-black font-mono text-amber-400">100%</div>
-                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">UPI & Cash Reconciliation</div>
+                <div className="p-2.5 sm:p-3 bg-white/5 rounded-2xl border border-white/5 text-center">
+                  <div className="text-lg sm:text-2xl font-black font-mono text-amber-400">100%</div>
+                  <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium mt-0.5">Reconciliation</div>
                 </div>
               </div>
             </div>
 
             {/* Hero Right Visual / Live Interactive Simulator */}
-            <div className="lg:col-span-5" id="simulator">
+            <div className="lg:col-span-5 max-w-xl mx-auto lg:max-w-none w-full scroll-mt-24" id="simulator">
               <div className="relative">
                 {/* Decorative glowing gradient border */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-cyan-500 to-emerald-500 rounded-3xl blur-md opacity-40 animate-pulse" />
 
-                <div className="relative glass-panel rounded-3xl p-5 sm:p-6 border border-white/10 shadow-2xl space-y-4">
+                <div className="relative glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/10 shadow-2xl space-y-3.5 sm:space-y-4">
                   {/* Card Header */}
                   <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-indigo-500/20 text-indigo-400 rounded-lg">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="p-1.5 bg-indigo-500/20 text-indigo-400 rounded-lg shrink-0">
                         <QrCode className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="text-xs font-bold text-white uppercase tracking-wider">
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-white uppercase tracking-wider truncate">
                           Live Booth Terminal Simulator
                         </div>
-                        <div className="text-[10px] text-slate-400 font-mono">
+                        <div className="text-[10px] text-slate-400 font-mono truncate">
                           Central Station • Gate Lane 01
                         </div>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-[10px] font-bold">
+                    <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-[10px] font-bold shrink-0">
                       READY
                     </span>
                   </div>
 
                   {/* Simulator Form */}
-                  <form onSubmit={handleSimGenerateToken} className="space-y-3.5">
+                  <form onSubmit={handleSimGenerateToken} className="space-y-3">
                     {/* Vehicle Type Switcher */}
                     <div>
                       <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                         Select Vehicle Category
                       </label>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                         {[
                           { id: 'bike', label: '2-Wheeler', icon: Bike, rate: '₹20/4h' },
                           { id: 'car', label: '4-Wheeler', icon: Car, rate: '₹50/4h' },
@@ -457,14 +588,14 @@ export function LandingPage() {
                               key={v.id}
                               type="button"
                               onClick={() => setSimVehicleType(v.id)}
-                              className={`p-2.5 rounded-xl text-center border transition flex flex-col items-center gap-1 ${
+                              className={`p-2 sm:p-2.5 rounded-xl text-center border transition flex flex-col items-center gap-1 ${
                                 active
                                   ? 'bg-indigo-600/30 border-indigo-500 text-white shadow-glow'
                                   : 'bg-slate-800/60 border-white/5 text-slate-400 hover:bg-slate-800'
                               }`}
                             >
-                              <Icon className={`w-5 h-5 ${active ? 'text-cyan-400' : 'text-slate-400'}`} />
-                              <span className="text-[11px] font-bold leading-tight">{v.label}</span>
+                              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${active ? 'text-cyan-400' : 'text-slate-400'}`} />
+                              <span className="text-[10px] sm:text-[11px] font-bold leading-tight">{v.label}</span>
                               <span className="text-[9px] font-mono text-slate-400">{v.rate}</span>
                             </button>
                           );
@@ -482,14 +613,14 @@ export function LandingPage() {
                         value={simPlate}
                         onChange={(e) => setSimPlate(e.target.value.toUpperCase())}
                         placeholder="e.g. MH 12 AB 8842"
-                        className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-white/10 rounded-xl text-white font-mono font-bold tracking-widest text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition"
+                        className="w-full px-3 sm:px-3.5 py-2 sm:py-2.5 bg-slate-900/90 border border-white/10 rounded-xl text-white font-mono font-bold tracking-wider sm:tracking-widest text-xs sm:text-sm focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition"
                       />
                     </div>
 
                     {/* Instant Generate Button */}
                     <button
                       type="submit"
-                      className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-glowEmerald flex items-center justify-center gap-2 transition"
+                      className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-glowEmerald flex items-center justify-center gap-2 transition"
                     >
                       <Printer className="w-4 h-4" />
                       <span>Print Simulated QR Token</span>
@@ -498,28 +629,28 @@ export function LandingPage() {
 
                   {/* Generated Simulated Token Card */}
                   {simGeneratedToken && (
-                    <div className="p-3.5 bg-white text-slate-900 rounded-2xl border border-slate-300 shadow-xl space-y-2 animate-fade-in font-mono text-xs">
-                      <div className="text-center border-b border-dashed border-slate-400 pb-2">
-                        <div className="font-black text-sm tracking-tight text-[#142B4A]">SR FABRICATION</div>
-                        <div className="text-[10px] text-slate-600">CENTRAL RAILWAY STATION PARKING</div>
+                    <div className="p-3 sm:p-3.5 bg-white text-slate-900 rounded-xl sm:rounded-2xl border border-slate-300 shadow-xl space-y-1.5 animate-fade-in font-mono text-[11px]">
+                      <div className="text-center border-b border-dashed border-slate-400 pb-1.5">
+                        <div className="font-black text-xs sm:text-sm tracking-tight text-[#142B4A]">SR FABRICATION</div>
+                        <div className="text-[9px] text-slate-600">CENTRAL RAILWAY STATION PARKING</div>
                       </div>
-                      <div className="flex justify-between py-1 text-[11px]">
+                      <div className="flex justify-between py-0.5 text-[10px] sm:text-[11px]">
                         <span className="text-slate-600">TOKEN NO:</span>
                         <span className="font-black text-blue-800">{simGeneratedToken.tokenNumber}</span>
                       </div>
-                      <div className="flex justify-between py-1 text-[11px]">
+                      <div className="flex justify-between py-0.5 text-[10px] sm:text-[11px]">
                         <span className="text-slate-600">VEHICLE:</span>
                         <span className="font-black">{simGeneratedToken.vehicleNumber}</span>
                       </div>
-                      <div className="flex justify-between py-1 text-[11px]">
+                      <div className="flex justify-between py-0.5 text-[10px] sm:text-[11px]">
                         <span className="text-slate-600">CATEGORY:</span>
                         <span className="uppercase font-bold">{simGeneratedToken.vehicleType}</span>
                       </div>
-                      <div className="flex justify-between py-1 text-[11px]">
+                      <div className="flex justify-between py-0.5 text-[10px] sm:text-[11px]">
                         <span className="text-slate-600">ENTRY TIME:</span>
                         <span>{simGeneratedToken.date} {simGeneratedToken.entryTime}</span>
                       </div>
-                      <div className="p-2 bg-slate-100 rounded-lg text-center text-[10px] text-slate-700 font-bold">
+                      <div className="p-1.5 bg-slate-100 rounded-lg text-center text-[9px] sm:text-[10px] text-slate-700 font-bold">
                         RATE SLAB: {simGeneratedToken.rateInfo}
                       </div>
                       <div className="text-center text-[9px] text-slate-500 pt-1 border-t border-dashed border-slate-400">
@@ -534,25 +665,107 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* COMPREHENSIVE INTERACTIVE USER MANUAL SECTION */}
-      <section id="manual" className="py-20 px-4 sm:px-8 border-t border-white/10 bg-slate-950/60 relative">
-        <div className="max-w-7xl mx-auto space-y-12">
+      {/* CORE FEATURES SECTION */}
+      <section id="features" className="py-12 sm:py-20 px-3 sm:px-6 lg:px-8 border-t border-white/10 relative scroll-mt-20">
+        <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
           {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-3">
+          <div className="text-center max-w-3xl mx-auto space-y-2.5 sm:space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs font-bold text-emerald-400">
+              <Zap className="w-3.5 h-3.5" />
+              <span>INDIAN RAILWAY CERTIFIED PLATFORM</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+              Enterprise Station Parking Capabilities
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
+              Engineered specifically for busy railway station entry gates, multi-tier tariff enforcement, contactless commuter passes, and zero-leakage fiscal audits.
+            </p>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="glass-card p-4 sm:p-6 space-y-3 landing-card-glow border border-white/10 rounded-2xl">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                <QrCode className="w-5 h-5" />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-white font-outfit">Sub-2s Thermal QR Ticketing</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                High-speed vehicle entry with instant 80mm & 58mm thermal token printing. Compatible with ESC/POS USB, Bluetooth, and LAN network ticket printers.
+              </p>
+            </div>
+
+            <div className="glass-card p-4 sm:p-6 space-y-3 landing-card-glow border border-white/10 rounded-2xl">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                <Layers className="w-5 h-5" />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-white font-outfit">Multi-Tier Tariff Automation</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Automated 0-2h, 4h, 12h, 24h, and lost-token penalty slab calculation compliant with Indian Railways rate circulars, including automated 18% GST segregation.
+              </p>
+            </div>
+
+            <div className="glass-card p-4 sm:p-6 space-y-3 landing-card-glow border border-white/10 rounded-2xl">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                <CreditCard className="w-5 h-5" />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-white font-outfit">Digital Monthly Pass Passes</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Express commuter entry with verifiable QR passes for daily train passengers. Real-time expiry alerts, instant renewals, and multi-month discount tiers.
+              </p>
+            </div>
+
+            <div className="glass-card p-4 sm:p-6 space-y-3 landing-card-glow border border-white/10 rounded-2xl">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-white font-outfit">Shift Settlement & Cash Handover</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Eliminate booth shortages with automated end-of-shift cash drawer balancing, UPI payment reconciliation, and signed handover statements for station superintendents.
+              </p>
+            </div>
+
+            <div className="glass-card p-4 sm:p-6 space-y-3 landing-card-glow border border-white/10 rounded-2xl">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                <Smartphone className="w-5 h-5" />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-white font-outfit">100% Offline Station Resilience</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Service Worker PWA engine caches critical terminal logic on device. Booth gates keep issuing tokens even during station network failures, syncing automatically upon reconnect.
+              </p>
+            </div>
+
+            <div className="glass-card p-4 sm:p-6 space-y-3 landing-card-glow border border-white/10 rounded-2xl">
+              <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-white font-outfit">Tamper-Proof Audit Logging</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Every token cancellation, tariff override, and gate emergency release is immutably timestamped with Operator ID and mandatory justification for commercial audits.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* COMPREHENSIVE INTERACTIVE USER MANUAL SECTION */}
+      <section id="manual" className="py-12 sm:py-20 px-3 sm:px-6 lg:px-8 border-t border-white/10 bg-slate-950/60 relative scroll-mt-20">
+        <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto space-y-2.5 sm:space-y-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-xs font-bold text-cyan-400">
               <BookOpen className="w-3.5 h-3.5" />
               <span>OFFICIAL DOCUMENTATION & OPERATIONAL WORKFLOWS</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-black font-outfit text-white tracking-tight">
               Complete User Manual for All Station Users
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
               Comprehensive operational SOPs, terminal guidelines, pass issuing steps, and hardware instructions tailored for every role in the railway ecosystem.
             </p>
           </div>
 
           {/* Role Persona Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-slate-900/90 border border-white/10 rounded-2xl max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 p-1.5 bg-slate-900/90 border border-white/10 rounded-2xl max-w-5xl mx-auto w-full">
             {[
               { id: 'operator', label: '1. Booth Attendant / Operator', icon: UserCheck, desc: 'Entry, Exit, POS Cash' },
               { id: 'admin', label: '2. Station Admin / Manager', icon: ShieldCheck, desc: 'Tariffs, Staff, Audits' },
@@ -565,14 +778,14 @@ export function LandingPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveManualTab(tab.id)}
-                  className={`flex-1 min-w-[160px] sm:min-w-[180px] p-2.5 sm:p-3 rounded-xl text-left transition flex items-center gap-2.5 ${
+                  className={`p-2.5 sm:p-3 rounded-xl text-left transition flex items-center gap-2.5 w-full ${
                     active
                       ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-glow'
                       : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-cyan-300' : 'text-slate-400'}`} />
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="text-xs font-bold truncate leading-tight">{tab.label}</div>
                     <div className="text-[10px] text-slate-300/80 truncate">{tab.desc}</div>
                   </div>
@@ -1074,35 +1287,40 @@ export function LandingPage() {
       </section>
 
       {/* INTERACTIVE TARIFF RATES & CALCULATOR */}
-      <section id="tariffs" className="py-20 px-4 sm:px-8 border-t border-white/10 relative">
-        <div className="max-w-7xl mx-auto space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
+      <section id="tariffs" className="py-12 sm:py-20 px-3 sm:px-6 lg:px-8 border-t border-white/10 relative scroll-mt-20">
+        <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-2.5 sm:space-y-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-xs font-bold text-amber-400">
               <Layers className="w-3.5 h-3.5" />
               <span>OFFICIAL TARIFF SLAB CALCULATOR</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-black font-outfit text-white tracking-tight">
               Transparent Station Parking Tariffs
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
               Check official Indian Railways slab rates for any vehicle type and calculate your estimated cost in real time.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             {/* Tariff Matrix Table */}
-            <div className="lg:col-span-7 glass-panel rounded-3xl p-6 border border-white/10 space-y-4">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="lg:col-span-7 glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/10 space-y-3 sm:space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-3 gap-1 sm:gap-0">
                 <span className="text-xs font-bold text-white uppercase tracking-wider">
                   Official Standard Rates Schedule
                 </span>
                 <span className="text-[10px] text-slate-400 font-mono">GST 18% Inclusive</span>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+              {/* Mobile swipe helper badge */}
+              <div className="sm:hidden text-[10px] text-cyan-400 font-mono text-center bg-cyan-950/40 border border-cyan-800/40 rounded-lg py-1 px-2">
+                ← Swipe horizontally to view full rate table →
+              </div>
+
+              <div className="tariff-table-wrap">
+                <table className="w-full text-left text-xs min-w-[460px] sm:min-w-full">
                   <thead>
-                    <tr className="text-slate-400 border-b border-white/10 font-mono">
+                    <tr className="text-slate-400 border-b border-white/10 font-mono text-[11px]">
                       <th className="py-2.5">Category</th>
                       <th className="py-2.5">0 - 4 Hrs</th>
                       <th className="py-2.5">4 - 12 Hrs</th>
@@ -1113,7 +1331,7 @@ export function LandingPage() {
                   <tbody className="divide-y divide-white/5 text-slate-200">
                     <tr>
                       <td className="py-3 font-bold flex items-center gap-2">
-                        <Bike className="w-4 h-4 text-cyan-400" />
+                        <Bike className="w-4 h-4 text-cyan-400 shrink-0" />
                         <span>2-Wheeler / Bike</span>
                       </td>
                       <td className="py-3 font-mono">₹20</td>
@@ -1123,7 +1341,7 @@ export function LandingPage() {
                     </tr>
                     <tr>
                       <td className="py-3 font-bold flex items-center gap-2">
-                        <Car className="w-4 h-4 text-indigo-400" />
+                        <Car className="w-4 h-4 text-indigo-400 shrink-0" />
                         <span>4-Wheeler / Car</span>
                       </td>
                       <td className="py-3 font-mono">₹50</td>
@@ -1133,7 +1351,7 @@ export function LandingPage() {
                     </tr>
                     <tr>
                       <td className="py-3 font-bold flex items-center gap-2">
-                        <Compass className="w-4 h-4 text-amber-400" />
+                        <Compass className="w-4 h-4 text-amber-400 shrink-0" />
                         <span>Auto-Rickshaw (3W)</span>
                       </td>
                       <td className="py-3 font-mono">₹30</td>
@@ -1143,7 +1361,7 @@ export function LandingPage() {
                     </tr>
                     <tr>
                       <td className="py-3 font-bold flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-purple-400" />
+                        <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
                         <span>Bicycle / Cycle</span>
                       </td>
                       <td className="py-3 font-mono">₹10</td>
@@ -1157,7 +1375,7 @@ export function LandingPage() {
             </div>
 
             {/* Interactive Tariff Calculator */}
-            <div className="lg:col-span-5 glass-card p-6 border border-white/10 space-y-4">
+            <div className="lg:col-span-5 max-w-xl mx-auto lg:max-w-none w-full glass-card p-4 sm:p-6 border border-white/10 space-y-4 rounded-2xl sm:rounded-3xl">
               <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
                 <CreditCard className="w-4 h-4" />
                 <span>Live Cost Estimator</span>
@@ -1165,19 +1383,19 @@ export function LandingPage() {
 
               {/* Vehicle Selection */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5 sm:mb-2">
                   Vehicle Type
                 </label>
-                <div className="grid grid-cols-4 gap-1.5">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
                   {['bike', 'car', 'auto', 'cycle'].map((v) => (
                     <button
                       key={v}
                       type="button"
                       onClick={() => setCalcVehicle(v)}
-                      className={`py-2 px-2 rounded-xl text-center capitalize text-xs font-bold transition border ${
+                      className={`py-2 sm:py-2.5 px-2 rounded-xl text-center capitalize text-xs font-bold transition border ${
                         calcVehicle === v
-                          ? 'bg-indigo-600 border-indigo-400 text-white'
-                          : 'bg-slate-900 border-white/5 text-slate-400 hover:text-white'
+                          ? 'bg-indigo-600 border-indigo-400 text-white shadow-sm'
+                          : 'bg-slate-900 border-white/5 text-slate-400 hover:text-white hover:bg-slate-800'
                       }`}
                     >
                       {v}
@@ -1188,10 +1406,10 @@ export function LandingPage() {
 
               {/* Duration Selection */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5 sm:mb-2">
                   Duration Tier
                 </label>
-                <div className="grid grid-cols-5 gap-1.5">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-2">
                   {[
                     { id: '1h', label: '1 Hr' },
                     { id: '4h', label: '4 Hrs' },
@@ -1203,10 +1421,10 @@ export function LandingPage() {
                       key={d.id}
                       type="button"
                       onClick={() => setCalcDuration(d.id)}
-                      className={`py-2 px-1 rounded-xl text-center text-xs font-bold transition border ${
+                      className={`py-2 sm:py-2.5 px-1.5 rounded-xl text-center text-xs font-bold transition border ${
                         calcDuration === d.id
-                          ? 'bg-cyan-600 border-cyan-400 text-white'
-                          : 'bg-slate-900 border-white/5 text-slate-400 hover:text-white'
+                          ? 'bg-cyan-600 border-cyan-400 text-white shadow-sm'
+                          : 'bg-slate-900 border-white/5 text-slate-400 hover:text-white hover:bg-slate-800'
                       }`}
                     >
                       {d.label}
@@ -1216,7 +1434,7 @@ export function LandingPage() {
               </div>
 
               {/* Estimate Breakdown Card */}
-              <div className="p-4 bg-slate-900/90 rounded-2xl border border-white/10 space-y-2 font-mono text-xs">
+              <div className="p-3.5 sm:p-4 bg-slate-900/90 rounded-2xl border border-white/10 space-y-2 font-mono text-xs">
                 <div className="flex justify-between text-slate-400">
                   <span>Base Tariff:</span>
                   <span>₹{tariffEstimate.subtotal}</span>
@@ -1225,7 +1443,7 @@ export function LandingPage() {
                   <span>GST (18%):</span>
                   <span>₹{tariffEstimate.gst}</span>
                 </div>
-                <div className="flex justify-between text-base font-black text-white pt-2 border-t border-white/10">
+                <div className="flex justify-between text-sm sm:text-base font-black text-white pt-2 border-t border-white/10">
                   <span>Total Payable:</span>
                   <span className="text-emerald-400 font-mono">₹{tariffEstimate.total}</span>
                 </div>
@@ -1237,7 +1455,7 @@ export function LandingPage() {
                   setAuthSubmode('signup');
                   setAuthModalOpen(true);
                 }}
-                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl text-xs transition shadow-glow flex items-center justify-center gap-2"
+                className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl text-xs transition shadow-glow flex items-center justify-center gap-2"
               >
                 <span>Purchase Digital Pass / Token</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1248,25 +1466,25 @@ export function LandingPage() {
       </section>
 
       {/* INSTALL AS MOBILE APP (PWA SHOWCASE) */}
-      <section id="install-pwa" className="py-20 px-4 sm:px-8 border-t border-white/10 bg-slate-950/70 relative">
-        <div className="max-w-7xl mx-auto space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
+      <section id="install-pwa" className="py-12 sm:py-20 px-3 sm:px-6 lg:px-8 border-t border-white/10 bg-slate-950/70 relative scroll-mt-20">
+        <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-2.5 sm:space-y-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs font-bold text-emerald-400">
               <Smartphone className="w-3.5 h-3.5" />
               <span>INSTALLABLE PROGRESSIVE WEB APPLICATION (PWA)</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-black font-outfit text-white tracking-tight">
               Install As Native App on Any Mobile
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
               Experience the full application directly installed on your smartphone (Android & iPhone). Fast launches from home screen, zero Play Store downloads required, works offline at station gates!
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="glass-card p-6 space-y-4 text-center flex flex-col items-center">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
-                <Smartphone className="w-7 h-7" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="glass-card p-4 sm:p-6 space-y-3 sm:space-y-4 text-center flex flex-col items-center rounded-2xl">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                <Smartphone className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h3 className="text-base font-bold text-white font-outfit">1-Tap Direct Install</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
@@ -1274,35 +1492,35 @@ export function LandingPage() {
               </p>
               <button
                 onClick={handleInstallClick}
-                className="mt-auto w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-glowEmerald transition"
+                className="mt-auto w-full py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-glowEmerald transition"
               >
                 <Download className="w-4 h-4" />
                 <span>Install Mobile App Now</span>
               </button>
             </div>
 
-            <div className="glass-card p-6 space-y-4 text-center flex flex-col items-center">
-              <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                <Zap className="w-7 h-7" />
+            <div className="glass-card p-4 sm:p-6 space-y-3 sm:space-y-4 text-center flex flex-col items-center rounded-2xl">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                <Zap className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h3 className="text-base font-bold text-white font-outfit">Native Mobile Navigation</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
                 When launched from your mobile home screen, browser search bars vanish! Features touch-friendly bottom bars, haptic feedbacks, and instant optical camera QR scanners.
               </p>
-              <div className="mt-auto p-2.5 bg-slate-900 rounded-xl text-[11px] text-cyan-300 font-mono w-full">
+              <div className="mt-auto p-2 sm:p-2.5 bg-slate-900 rounded-xl text-[10px] sm:text-[11px] text-cyan-300 font-mono w-full">
                 Edge-to-Edge OLED UI • Safe Area
               </div>
             </div>
 
-            <div className="glass-card p-6 space-y-4 text-center flex flex-col items-center">
-              <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                <Clock className="w-7 h-7" />
+            <div className="glass-card p-4 sm:p-6 space-y-3 sm:space-y-4 text-center flex flex-col items-center rounded-2xl">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                <Clock className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
               <h3 className="text-base font-bold text-white font-outfit">Offline Station Mode</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
                 Railway stations often have poor cell signal. Our PWA automatically caches tariffs and tokens locally, letting booth attendants work uninterrupted.
               </p>
-              <div className="mt-auto p-2.5 bg-slate-900 rounded-xl text-[11px] text-emerald-400 font-mono w-full">
+              <div className="mt-auto p-2 sm:p-2.5 bg-slate-900 rounded-xl text-[10px] sm:text-[11px] text-emerald-400 font-mono w-full">
                 100% Offline Cache Active
               </div>
             </div>
@@ -1311,19 +1529,19 @@ export function LandingPage() {
       </section>
 
       {/* FAQ SECTION */}
-      <section id="faq" className="py-20 px-4 sm:px-8 border-t border-white/10 relative">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="text-center space-y-3">
+      <section id="faq" className="py-12 sm:py-20 px-3 sm:px-6 lg:px-8 border-t border-white/10 relative scroll-mt-20">
+        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
+          <div className="text-center space-y-2.5 sm:space-y-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-xs font-bold text-indigo-400">
               <HelpCircle className="w-3.5 h-3.5" />
               <span>FREQUENTLY ASKED QUESTIONS</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black font-outfit text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-black font-outfit text-white tracking-tight">
               Station Operator & User Inquiries
             </h2>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5 sm:space-y-3">
             {[
               {
                 q: 'How does a first-time user sign up with free Gmail access?',
@@ -1350,17 +1568,17 @@ export function LandingPage() {
               return (
                 <div
                   key={idx}
-                  className="glass-card overflow-hidden transition"
+                  className="glass-card overflow-hidden transition rounded-2xl"
                 >
                   <button
                     onClick={() => setActiveFaq(isOpen ? null : idx)}
-                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-white hover:text-indigo-300 transition"
+                    className="w-full p-3.5 sm:p-5 text-left flex items-center justify-between gap-3 sm:gap-4 font-bold text-xs sm:text-sm text-white hover:text-indigo-300 transition"
                   >
                     <span>{faq.q}</span>
                     {isOpen ? <ChevronUp className="w-4 h-4 text-indigo-400 shrink-0" /> : <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />}
                   </button>
                   {isOpen && (
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs text-slate-300 leading-relaxed border-t border-white/5 pt-3">
+                    <div className="px-3.5 pb-3.5 sm:px-5 sm:pb-5 text-xs text-slate-300 leading-relaxed border-t border-white/5 pt-3">
                       {faq.a}
                     </div>
                   )}
@@ -1372,7 +1590,7 @@ export function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/10 bg-[#060911] py-12 px-4 sm:px-8 text-xs text-slate-400">
+      <footer className="border-t border-white/10 bg-[#060911] py-8 sm:py-12 px-3 sm:px-6 lg:px-8 text-xs text-slate-400 landing-safe-bottom">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="space-y-1">
             <BrandLogo size="small" inverted={true} />
@@ -1381,7 +1599,7 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 font-medium text-slate-300">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-medium text-slate-300">
             <a href="#manual" className="hover:text-white transition">User Manuals</a>
             <a href="#tariffs" className="hover:text-white transition">Tariff Schedule</a>
             <a href="#install-pwa" className="hover:text-white transition">PWA Mobile App</a>
@@ -1398,17 +1616,17 @@ export function LandingPage() {
 
       {/* AUTH MODAL (LOGIN & SIGNUP WITH GOOGLE & EMAIL OTP) */}
       {authModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="w-full max-w-md bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in overflow-y-auto">
+          <div className="w-full max-w-md max-h-[92vh] sm:max-h-[88vh] flex flex-col bg-slate-900 border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden relative my-auto">
             {/* Modal Header */}
-            <div className="bg-[#142B4A] p-5 sm:p-6 text-center text-white relative">
+            <div className="shrink-0 bg-[#142B4A] p-4 sm:p-6 text-center text-white relative">
               <button
                 onClick={() => setAuthModalOpen(false)}
-                className="absolute top-4 right-4 p-1.5 text-blue-200 hover:text-white hover:bg-white/10 rounded-xl transition"
+                className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 p-1.5 text-blue-200 hover:text-white hover:bg-white/10 rounded-xl transition"
               >
                 <X className="w-5 h-5" />
               </button>
-              <div className="flex justify-center mb-2">
+              <div className="flex justify-center mb-1.5 sm:mb-2">
                 <BrandLogo size="default" inverted={true} />
               </div>
               <div className="text-xs text-blue-200 mt-1 font-medium">
@@ -1417,7 +1635,7 @@ export function LandingPage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-5 sm:p-6 space-y-4">
+            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto overscroll-contain flex-1 touch-scroll">
               {/* Notices */}
               {authError && (
                 <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs flex items-start gap-2">
@@ -1496,7 +1714,7 @@ export function LandingPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="youremail@gmail.com"
-                            className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 transition"
+                            className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs sm:text-sm focus:outline-none focus:border-indigo-500 transition"
                           />
                         </div>
                         <p className="text-[10px] text-slate-400 mt-1">
@@ -1530,7 +1748,7 @@ export function LandingPage() {
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
                           placeholder="e.g. Rahul Sharma"
-                          className="w-full px-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 transition"
+                          className="w-full px-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs sm:text-sm focus:outline-none focus:border-indigo-500 transition"
                         />
                       </div>
 
@@ -1651,7 +1869,7 @@ export function LandingPage() {
                       value={operatorId}
                       onChange={(e) => setOperatorId(e.target.value)}
                       placeholder="e.g. admin or operator1"
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 transition"
+                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs sm:text-sm focus:outline-none focus:border-indigo-500 transition"
                     />
                   </div>
 
@@ -1666,7 +1884,7 @@ export function LandingPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500 transition"
+                        className="w-full px-3.5 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-white text-xs sm:text-sm focus:outline-none focus:border-indigo-500 transition"
                       />
                     </div>
                   ) : (
@@ -1740,17 +1958,17 @@ export function LandingPage() {
 
       {/* IOS / BROWSER PWA INSTALL INSTRUCTION MODAL */}
       {iosModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="w-full max-w-sm bg-slate-900 border border-white/10 rounded-3xl shadow-2xl p-6 space-y-4 text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in overflow-y-auto">
+          <div className="w-full max-w-sm max-h-[90vh] overflow-y-auto bg-slate-900 border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 space-y-4 text-center my-auto touch-scroll">
             <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto">
               <Download className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold font-outfit text-white">Install SRF Parking App</h3>
+            <h3 className="text-base sm:text-lg font-bold font-outfit text-white">Install SRF Parking App</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
               To install this application on your smartphone:
             </p>
 
-            <div className="p-4 bg-slate-950 rounded-2xl border border-white/5 text-left text-xs space-y-3">
+            <div className="p-3.5 sm:p-4 bg-slate-950 rounded-2xl border border-white/5 text-left text-xs space-y-2.5 sm:space-y-3">
               <div className="flex items-start gap-2.5">
                 <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-black flex items-center justify-center shrink-0">1</span>
                 <span className="text-slate-300">Tap the <strong>Share</strong> button <Share2 className="w-3.5 h-3.5 inline text-cyan-400 mx-0.5" /> in Safari or Chrome.</span>
@@ -1767,12 +1985,23 @@ export function LandingPage() {
 
             <button
               onClick={() => setIosModalOpen(false)}
-              className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl text-xs transition shadow-glow"
+              className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-xl text-xs transition shadow-glow"
             >
               Got It, Close
             </button>
           </div>
         </div>
+      )}
+
+      {/* FLOATING BACK TO TOP BUTTON */}
+      {showBackToTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Back to top"
+          className="fixed bottom-5 right-5 z-40 p-3 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white shadow-xl transition transform hover:scale-110 active:scale-95 back-to-top-btn"
+        >
+          <ArrowUp className="w-4 h-4" />
+        </button>
       )}
     </div>
   );
