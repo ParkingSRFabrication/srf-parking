@@ -35,22 +35,22 @@ const allowedOrigins = [
   'http://127.0.0.1:5173'
 ];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // In development, allow all origins (localhost, 127.0.0.1, LAN IPs)
-    if (ENV.NODE_ENV !== 'production' || !origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    // Check local LAN IP patterns (10.x, 192.168.x, 172.16-31.x)
-    if (/^https?:\/\/(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:\d+)?$/.test(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error(`Origin ${origin} not allowed by CORS`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     // In development, allow all origins (localhost, 127.0.0.1, LAN IPs)
+//     if (ENV.NODE_ENV !== 'production' || !origin || allowedOrigins.includes(origin)) {
+//       return callback(null, true);
+//     }
+//     // Check local LAN IP patterns (10.x, 192.168.x, 172.16-31.x)
+//     if (/^https?:\/\/(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:\d+)?$/.test(origin)) {
+//       return callback(null, true);
+//     }
+//     return callback(new Error(`Origin ${origin} not allowed by CORS`));
+//   },
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+// }));
 
 // Request parsers & compression
 app.use(compression());

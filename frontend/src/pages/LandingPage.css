@@ -1,6 +1,23 @@
 /* LandingPage Specific Animations and Transitions */
 .landing-root {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  position: relative;
+}
+
+/* Ensure smooth section scrolling without navbar collision */
+.landing-root section[id],
+.landing-root div[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+@media (max-width: 640px) {
+  .landing-root section[id],
+  .landing-root div[id] {
+    scroll-margin-top: 4.25rem;
+  }
 }
 
 @keyframes fadeIn {
@@ -14,8 +31,23 @@
   }
 }
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Micro glow hover effects */
@@ -27,3 +59,37 @@
   transform: translateY(-2px);
   box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.2);
 }
+
+/* Mobile Touch Optimization & Scrollable Containers */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+}
+
+.touch-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.touch-scroll::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+}
+
+/* Mobile Safe Area Padding */
+.landing-safe-bottom {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+/* Responsive Table Container Styling */
+.tariff-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Back to Top floating button */
+.back-to-top-btn {
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+}
+
