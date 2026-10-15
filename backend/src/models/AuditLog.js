@@ -22,7 +22,7 @@ const auditLogSchema = new mongoose.Schema({
   entityType: {
     type: String,
     required: true,
-    enum: ['User', 'ParkingToken', 'MonthlyPass', 'Tariff', 'Payment', 'Settings', 'Auth', 'Database'],
+    enum: ['User', 'ParkingToken', 'MonthlyPass', 'Tariff', 'Payment', 'Settings', 'Auth', 'Database', 'Vehicle'],
     index: true
   },
   entityId: {

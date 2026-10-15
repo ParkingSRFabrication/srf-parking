@@ -6,16 +6,16 @@ import {
   getPasses,
   getPassById
 } from '../controllers/passController.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireOperatorOrAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.post('/', createPass);
-router.get('/', getPasses);
+router.post('/', requireOperatorOrAdmin, createPass);
+router.get('/', requireOperatorOrAdmin, getPasses);
 router.get('/:id', getPassById);
-router.post('/:id/renew', renewPass);
-router.post('/:id/cancel', cancelPass);
+router.post('/:id/renew', requireOperatorOrAdmin, renewPass);
+router.post('/:id/cancel', requireOperatorOrAdmin, cancelPass);
 
 export default router;

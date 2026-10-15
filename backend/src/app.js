@@ -20,6 +20,7 @@ import vehicleRoutes from './routes/vehicleRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import auditRoutes from './routes/auditRoutes.js';
 import backupRoutes from './routes/backupRoutes.js';
+import customerRoutes from './routes/customerRoutes.js';
 
 const app = express();
 
@@ -88,6 +89,7 @@ app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/audit-logs', auditRoutes);
 app.use('/api/backup', backupRoutes);
+app.use('/api/customer', customerRoutes);
 
 // Catch-all 404 handler for undefined API routes
 app.use((req, res) => {

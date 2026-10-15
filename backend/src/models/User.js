@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'operator', 'commuter'],
-    default: 'operator',
+    enum: ['admin', 'operator', 'customer', 'commuter'],
+    default: 'customer',
     index: true
   },
   email: {
@@ -36,6 +36,35 @@ const userSchema = new mongoose.Schema({
     sparse: true,
     index: true
   },
+  phone: {
+    type: String,
+    trim: true,
+    sparse: true,
+    index: true
+  },
+  vehicles: [{
+    registrationNumber: {
+      type: String,
+      uppercase: true,
+      trim: true,
+      required: true
+    },
+    vehicleType: {
+      type: String,
+      lowercase: true,
+      trim: true,
+      default: 'bike'
+    },
+    nickname: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    addedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   authProvider: {
     type: String,
     enum: ['local', 'google', 'otp'],
