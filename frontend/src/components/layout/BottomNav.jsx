@@ -5,38 +5,46 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   Ticket,
-  CalendarCheck
+  CalendarCheck,
+  Car,
+  Receipt,
+  Layers,
+  Users,
+  BarChart3
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.jsx';
 import './BottomNav.css';
 
 export function BottomNav({ onOpenMenu }) {
-  const bottomNavItems = [
-    {
-      to: '/dashboard',
-      label: 'Home',
-      icon: LayoutDashboard
-    },
-    {
-      to: '/entry',
-      label: 'Entry',
-      icon: ArrowDownRight
-    },
-    {
-      to: '/exit',
-      label: 'Exit',
-      icon: ArrowUpRight
-    },
-    {
-      to: '/tokens',
-      label: 'Tokens',
-      icon: Ticket
-    },
-    {
-      to: '/passes',
-      label: 'Passes',
-      icon: CalendarCheck
-    }
-  ];
+  const { isAdmin, isOperator, isCustomer } = useAuth();
+
+  let bottomNavItems = [];
+
+  if (isCustomer) {
+    bottomNavItems = [
+      { to: '/customer/dashboard', label: 'Home', icon: LayoutDashboard },
+      { to: '/customer/vehicles', label: 'Vehicles', icon: Car },
+      { to: '/customer/passes', label: 'Passes', icon: CalendarCheck },
+      { to: '/customer/history', label: 'Receipts', icon: Receipt }
+    ];
+  } else if (isAdmin) {
+    bottomNavItems = [
+      { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { to: '/tariffs', label: 'Tariffs', icon: Layers },
+      { to: '/operators', label: 'Operators', icon: Users },
+      { to: '/reports', label: 'Reports', icon: BarChart3 },
+      { to: '/tokens', label: 'Tokens', icon: Ticket }
+    ];
+  } else {
+    // Default / Operator
+    bottomNavItems = [
+      { to: '/operator/dashboard', label: 'Home', icon: LayoutDashboard },
+      { to: '/entry', label: 'Entry', icon: ArrowDownRight },
+      { to: '/exit', label: 'Exit', icon: ArrowUpRight },
+      { to: '/tokens', label: 'Tokens', icon: Ticket },
+      { to: '/passes', label: 'Passes', icon: CalendarCheck }
+    ];
+  }
 
   return (
     <nav

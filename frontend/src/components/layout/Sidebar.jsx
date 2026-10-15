@@ -16,17 +16,27 @@ import {
   X,
   LogOut,
   BookOpen,
-  Home
+  Home,
+  Car,
+  Receipt,
+  ShieldCheck
 } from 'lucide-react';
 import { BrandLogo } from '../common/BrandLogo.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import './Sidebar.css';
 
 export function Sidebar({ isOpen, onClose }) {
-  const { isAdmin, logout } = useAuth();
+  const { user, isAdmin, isOperator, isCustomer, logout, getDashboardPath } = useAuth();
 
-  const navItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, isBottomNav: true },
+  const customerNavItems = [
+    { label: 'Customer Dashboard', path: '/customer/dashboard', icon: LayoutDashboard },
+    { label: 'My Registered Vehicles', path: '/customer/vehicles', icon: Car },
+    { label: 'Monthly Commuter Passes', path: '/customer/passes', icon: CalendarCheck },
+    { label: 'Parking History & Receipts', path: '/customer/history', icon: Receipt },
+  ];
+
+  const operatorNavItems = [
+    { label: 'Operator Dashboard', path: '/operator/dashboard', icon: LayoutDashboard, isBottomNav: true },
     { label: 'Vehicle Entry', path: '/entry', icon: ArrowDownRight, isBottomNav: true },
     { label: 'Vehicle Exit', path: '/exit', icon: ArrowUpRight, isBottomNav: true },
     { label: 'Issue Monthly Pass', path: '/monthly-pass', icon: CreditCard, isBottomNav: false },
@@ -36,11 +46,21 @@ export function Sidebar({ isOpen, onClose }) {
   ];
 
   const adminNavItems = [
-    { label: 'Reports & Accounts', path: '/reports', icon: BarChart3 },
-    { label: 'Tariff Management', path: '/tariffs', icon: Layers },
+    { label: 'Admin Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+    { label: 'Tariff & Pricing', path: '/tariffs', icon: Layers },
     { label: 'Booth Operators', path: '/operators', icon: Users },
     { label: 'System Settings', path: '/settings', icon: Settings },
+    { label: 'Reports & Accounts', path: '/reports', icon: BarChart3 },
     { label: 'Audit Logs', path: '/audit-logs', icon: ShieldAlert },
+  ];
+
+  const adminOperationsNavItems = [
+    { label: 'Gate Entry', path: '/entry', icon: ArrowDownRight },
+    { label: 'Gate Exit', path: '/exit', icon: ArrowUpRight },
+    { label: 'Issue Pass', path: '/monthly-pass', icon: CreditCard },
+    { label: 'Tokens Ledger', path: '/tokens', icon: Ticket },
+    { label: 'Passes Ledger', path: '/passes', icon: CalendarCheck },
+    { label: 'Vehicle Search', path: '/vehicles', icon: Search },
   ];
 
   return (
@@ -64,9 +84,9 @@ export function Sidebar({ isOpen, onClose }) {
       >
         {/* Brand Header */}
         <div className="flex items-center justify-between gap-2 p-4 sm:p-5 border-b border-white/10 min-w-0">
-          <div className="min-w-0 flex-1 overflow-hidden">
+          <Link to={getDashboardPath()} className="min-w-0 flex-1 overflow-hidden" onClick={() => { if (window.innerWidth < 1024) onClose(); }}>
             <BrandLogo inverted={true} />
-          </div>
+          </Link>
           <button
             type="button"
             onClick={onClose}
@@ -79,60 +99,16 @@ export function Sidebar({ isOpen, onClose }) {
 
         {/* Navigation scrollable body */}
         <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6">
-          {/* Mobile Quick Summary Banner */}
-          <div className="lg:hidden mx-1 mb-4 p-3 rounded-xl bg-slate-900/90 border border-emerald-500/20 text-xs text-slate-300 shadow-inner">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <span className="text-emerald-400 font-bold text-[11px] uppercase tracking-wider font-mono">
-                Primary Gate Actions
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 leading-snug">
-              Home, Entry, Exit, Tokens & Passes are pinned to the bottom bar.
-            </p>
-          </div>
 
-          {/* Operations Section */}
-          <div>
-            <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest px-3 mb-2 font-mono flex items-center justify-between">
-              <span>
-                <span className="lg:hidden">Remaining </span>Terminal Operations
-              </span>
-            </div>
-            <nav className="space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => {
-                      if (window.innerWidth < 1024) onClose();
-                    }}
-                    className={({ isActive }) =>
-                      `${item.isBottomNav ? 'hidden lg:flex' : 'flex'} items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
-                        isActive
-                          ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold shadow-glow'
-                          : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                      }`
-                    }
-                  >
-                    <Icon className="w-4 h-4 shrink-0 text-cyan-400" />
-                    <span>{item.label}</span>
-                  </NavLink>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Administration Section */}
-          {isAdmin && (
+          {/* 1. CUSTOMER PORTAL NAVIGATION */}
+          {isCustomer && (
             <div>
-              <div className="text-[10px] font-bold text-purple-400 uppercase tracking-widest px-3 mb-2 font-mono">
-                Railway Administration
+              <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
+                <Car className="w-3 h-3" />
+                <span>Vehicle Owner Portal</span>
               </div>
               <nav className="space-y-1">
-                {adminNavItems.map((item) => {
+                {customerNavItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <NavLink
@@ -144,18 +120,118 @@ export function Sidebar({ isOpen, onClose }) {
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
                           isActive
-                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold shadow-glow'
+                            ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-glow'
                             : 'text-slate-300 hover:bg-white/5 hover:text-white'
                         }`
                       }
                     >
-                      <Icon className="w-4 h-4 shrink-0 text-purple-400" />
+                      <Icon className="w-4 h-4 shrink-0 text-emerald-400" />
                       <span>{item.label}</span>
                     </NavLink>
                   );
                 })}
               </nav>
             </div>
+          )}
+
+          {/* 2. OPERATOR TERMINAL NAVIGATION */}
+          {isOperator && (
+            <div>
+              <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
+                <Ticket className="w-3 h-3" />
+                <span>Terminal Operations</span>
+              </div>
+              <nav className="space-y-1">
+                {operatorNavItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => {
+                        if (window.innerWidth < 1024) onClose();
+                      }}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
+                          isActive
+                            ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-bold shadow-glow'
+                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                        }`
+                      }
+                    >
+                      <Icon className="w-4 h-4 shrink-0 text-cyan-400" />
+                      <span>{item.label}</span>
+                    </NavLink>
+                  );
+                })}
+              </nav>
+            </div>
+          )}
+
+          {/* 3. ADMINISTRATOR GOVERNANCE NAVIGATION */}
+          {isAdmin && (
+            <>
+              <div>
+                <div className="text-[10px] font-bold text-purple-400 uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
+                  <ShieldCheck className="w-3 h-3" />
+                  <span>Railway Administration</span>
+                </div>
+                <nav className="space-y-1">
+                  {adminNavItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <NavLink
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => {
+                          if (window.innerWidth < 1024) onClose();
+                        }}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
+                            isActive
+                              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold shadow-glow'
+                              : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                          }`
+                        }
+                      >
+                        <Icon className="w-4 h-4 shrink-0 text-purple-400" />
+                        <span>{item.label}</span>
+                      </NavLink>
+                    );
+                  })}
+                </nav>
+              </div>
+
+              <div>
+                <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest px-3 mb-2 font-mono">
+                  Station Gate Operations
+                </div>
+                <nav className="space-y-1">
+                  {adminOperationsNavItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <NavLink
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => {
+                          if (window.innerWidth < 1024) onClose();
+                        }}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
+                            isActive
+                              ? 'bg-white/10 text-white font-bold'
+                              : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                          }`
+                        }
+                      >
+                        <Icon className="w-4 h-4 shrink-0 text-cyan-400" />
+                        <span>{item.label}</span>
+                      </NavLink>
+                    );
+                  })}
+                </nav>
+              </div>
+            </>
           )}
 
           {/* Quick Landing Page & Manual link */}

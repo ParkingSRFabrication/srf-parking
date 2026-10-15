@@ -71,10 +71,14 @@ export function Navbar({ onToggleSidebar }) {
             <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
               <span className="font-mono">{user?.operatorId}</span>
               <span>•</span>
-              <span className={`capitalize px-1 rounded text-[9px] font-bold ${
-                isAdmin ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-300'
+              <span className={`capitalize px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                isAdmin
+                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                  : (user?.role === 'customer' || user?.role === 'commuter')
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                  : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
               }`}>
-                {user?.role}
+                {isAdmin ? 'Admin' : (user?.role === 'customer' || user?.role === 'commuter') ? 'Vehicle User' : 'Operator'}
               </span>
             </div>
           </div>

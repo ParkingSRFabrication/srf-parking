@@ -86,6 +86,24 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const register = async (userData) => {
+    const res = await api.post('/auth/register', userData);
+    if (res.data?.success && res.data?.token) {
+      localStorage.setItem('srf_token', res.data.token);
+      localStorage.setItem('srf_user', JSON.stringify(res.data.user));
+      setToken(res.data.token);
+      setUser(res.data.user);
+      return res.data;
+    }
+    throw new Error(res.data?.message || 'Registration failed');
+  };
+
+  const getDashboardPath = (targetRole = user?.role) => {
+    if (targetRole === 'admin') return '/admin/dashboard';
+    if (targetRole === 'operator') return '/operator/dashboard';
+    return '/customer/dashboard';
+  };
+
   const value = {
     user,
     token,
@@ -93,12 +111,15 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
     isOperator: user?.role === 'operator',
-    isCommuter: user?.role === 'commuter',
+    isCustomer: user?.role === 'customer' || user?.role === 'commuter',
+    isCommuter: user?.role === 'customer' || user?.role === 'commuter',
     login,
+    register,
     requestOtp,
     verifyOtp,
     loginWithGoogle,
-    logout
+    logout,
+    getDashboardPath
   };
 
   return (

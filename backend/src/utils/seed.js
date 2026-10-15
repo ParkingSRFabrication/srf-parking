@@ -136,6 +136,30 @@ async function seedDatabase() {
       isActive: true
     });
 
+    const customerPasswordHash = await bcrypt.hash('Customer@123', salt);
+    const customerMpinHash = await bcrypt.hash('1111', salt);
+
+    const customerUser = await User.create({
+      username: 'customer1',
+      operatorId: 'CUST-001',
+      name: 'Amit Sharma (Vehicle Owner)',
+      email: 'customer@srf.local',
+      phone: '9876543211',
+      role: 'customer',
+      passwordHash: customerPasswordHash,
+      mpinHash: customerMpinHash,
+      vehicles: [
+        {
+          registrationNumber: 'MH12AB1234',
+          vehicleType: 'bike',
+          nickname: 'Daily Commute Bike',
+          addedAt: new Date()
+        }
+      ],
+      permissions: ['view_own_vehicles', 'view_own_passes', 'view_own_history'],
+      isActive: true
+    });
+
     // 4. Default Tariffs (Updated per Owner Rates)
     const tariffsData = [
       { category: 'bike', name: 'Two Wheeler 24h Daily', billingMethod: '24_hour_daily', firstSlabAmount: 20, additionalDayAmount: 20, monthlyAmount: 200 },

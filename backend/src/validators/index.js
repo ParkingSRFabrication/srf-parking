@@ -105,3 +105,24 @@ export const settingsSchema = z.object({
     isVehicle: z.boolean()
   })).optional()
 });
+
+export const customerRegistrationSchema = z.object({
+  name: z.string().min(2, 'Full name must be at least 2 characters').trim(),
+  email: z.string().email('Please enter a valid email address').trim().toLowerCase().optional().or(z.literal('')),
+  phone: z.string().regex(/^[0-9+\-\s]{7,15}$/, 'Please enter a valid phone number').trim().optional().or(z.literal('')),
+  username: z.string().min(3, 'Username must be at least 3 characters').trim().toLowerCase().optional(),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  vehicleNumber: z.string().max(20).optional().default(''),
+  vehicleType: z.string().optional().default('bike')
+});
+
+export const customerVehicleSchema = z.object({
+  registrationNumber: z.string()
+    .min(2, 'Vehicle registration number is required')
+    .max(20, 'Vehicle number cannot exceed 20 characters')
+    .trim()
+    .transform(v => v.toUpperCase().replace(/\s+/g, '')),
+  vehicleType: z.string().min(1, 'Vehicle category is required').trim().toLowerCase().default('bike'),
+  nickname: z.string().max(50).optional().default('')
+});
+

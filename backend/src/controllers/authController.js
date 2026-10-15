@@ -1,8 +1,10 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { User } from '../models/User.js';
+import { Vehicle } from '../models/Vehicle.js';
 import { ENV } from '../config/env.js';
 import { AuditService } from '../services/auditService.js';
-import { loginSchema } from '../validators/index.js';
+import { loginSchema, customerRegistrationSchema } from '../validators/index.js';
 import { sendOtpEmail } from '../services/emailService.js';
 
 function generateTokens(user) {
@@ -29,11 +31,13 @@ export async function login(req, res, next) {
     const validated = loginSchema.parse(req.body);
     const identifier = validated.username.toLowerCase();
 
-    // Find user by username or operatorId
+    // Find user by username, operatorId, email, or phone
     const user = await User.findOne({
       $or: [
         { username: identifier },
-        { operatorId: validated.username.toUpperCase() }
+        { operatorId: validated.username.toUpperCase() },
+        { email: identifier },
+        { phone: validated.username.trim() }
       ]
     }).populate('assignedLocation');
 
@@ -139,7 +143,10 @@ export async function login(req, res, next) {
         username: user.username,
         operatorId: user.operatorId,
         name: user.name,
+        email: user.email,
+        phone: user.phone,
         role: user.role,
+        vehicles: user.vehicles || [],
         permissions: user.permissions,
         assignedLocation: user.assignedLocation
       }
@@ -319,22 +326,22 @@ export async function verifyOtp(req, res, next) {
       ]
     });
 
-    // Create user if not exists (Seamless First-Time Sign Up!)
+    // Create user if not exists (Public verification creates Vehicle User / Customer accounts ONLY)
     if (!user) {
       const baseUsername = normalizedEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
       const uniqueSuffix = Math.floor(100 + Math.random() * 900);
       const generatedUsername = `${baseUsername}${uniqueSuffix}`;
-      const generatedOperatorId = `USR-${Math.floor(1000 + Math.random() * 9000)}`;
+      const generatedCustomerId = `CUST-${Math.floor(1000 + Math.random() * 9000)}`;
 
       user = new User({
         username: generatedUsername,
-        operatorId: generatedOperatorId,
+        operatorId: generatedCustomerId,
         name: name?.trim() || normalizedEmail.split('@')[0],
         email: normalizedEmail,
-        role: role === 'admin' ? 'admin' : 'operator',
+        role: 'customer', // Public registration creates Vehicle User accounts only
         authProvider: 'otp',
         passwordHash: 'OTP_VERIFIED',
-        permissions: ['CREATE_ENTRY', 'PROCESS_EXIT', 'ISSUE_PASS', 'VIEW_TOKENS']
+        permissions: ['view_own_vehicles', 'view_own_passes', 'view_own_history']
       });
 
       await user.save();
@@ -420,18 +427,17 @@ export async function googleLogin(req, res, next) {
     if (!user) {
       const baseUsername = normalizedEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
       const uniqueSuffix = Math.floor(100 + Math.random() * 900);
-      const generatedUsername = `${baseUsername}${uniqueSuffix}`;
-      const generatedOperatorId = `GGL-${Math.floor(1000 + Math.random() * 9000)}`;
+      const generatedCustomerId = `GGL-${Math.floor(1000 + Math.random() * 9000)}`;
 
       user = new User({
         username: generatedUsername,
-        operatorId: generatedOperatorId,
+        operatorId: generatedCustomerId,
         name: name?.trim() || normalizedEmail.split('@')[0],
         email: normalizedEmail,
-        role: 'operator',
+        role: 'customer', // Public Google sign-in creates Vehicle User accounts only
         authProvider: 'google',
         passwordHash: 'GOOGLE_OAUTH_VERIFIED',
-        permissions: ['CREATE_ENTRY', 'PROCESS_EXIT', 'ISSUE_PASS', 'VIEW_TOKENS']
+        permissions: ['view_own_vehicles', 'view_own_passes', 'view_own_history']
       });
 
       await user.save();
@@ -480,7 +486,9 @@ export async function googleLogin(req, res, next) {
         operatorId: user.operatorId,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
+        vehicles: user.vehicles || [],
         permissions: user.permissions,
         assignedLocation: user.assignedLocation,
         picture: picture || null
@@ -490,4 +498,144 @@ export async function googleLogin(req, res, next) {
     next(error);
   }
 }
+
+/**
+ * Public Registration: Creates Vehicle User / Customer accounts ONLY.
+ * Users cannot select or modify their own role.
+ */
+export async function register(req, res, next) {
+  try {
+    const validated = customerRegistrationSchema.parse(req.body);
+
+    const email = validated.email ? validated.email.trim().toLowerCase() : null;
+    const phone = validated.phone ? validated.phone.trim() : null;
+
+    // Generate clean username if not provided
+    let username = validated.username?.trim().toLowerCase();
+    if (!username) {
+      if (email) {
+        username = email.split('@')[0].replace(/[^a-z0-9]/g, '');
+      } else {
+        username = validated.name.replace(/[^a-z0-9]/gi, '').toLowerCase();
+      }
+      const randSuffix = Math.floor(100 + Math.random() * 900);
+      username = `${username}${randSuffix}`;
+    }
+
+    // Check for duplicate account
+    const conflictOr = [{ username }];
+    if (email) conflictOr.push({ email });
+    if (phone) conflictOr.push({ phone });
+
+    const existing = await User.findOne({ $or: conflictOr });
+    if (existing) {
+      let duplicateField = 'username, email, or phone';
+      if (existing.username === username) duplicateField = 'username';
+      else if (email && existing.email === email) duplicateField = 'email';
+      else if (phone && existing.phone === phone) duplicateField = 'phone number';
+
+      return res.status(409).json({
+        success: false,
+        message: `An account with this ${duplicateField} already exists. Please sign in or use different details.`
+      });
+    }
+
+    // Generate unique Customer ID (never allow user to specify role or ID)
+    const customerId = `CUST-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(validated.password, salt);
+
+    // Initial vehicle setup if entered
+    const vehiclesList = [];
+    if (validated.vehicleNumber) {
+      const cleanReg = validated.vehicleNumber.trim().toUpperCase().replace(/\s+/g, '');
+      const vType = (validated.vehicleType || 'bike').toLowerCase();
+      vehiclesList.push({
+        registrationNumber: cleanReg,
+        vehicleType: vType,
+        nickname: 'Primary Vehicle',
+        addedAt: new Date()
+      });
+
+      // Also upsert Vehicle tracking record
+      await Vehicle.findOneAndUpdate(
+        { registrationNumber: cleanReg },
+        {
+          registrationNumber: cleanReg,
+          type: vType,
+          ownerName: validated.name.trim(),
+          ownerPhone: phone || ''
+        },
+        { upsert: true, new: true }
+      );
+    }
+
+    // ENFORCE SECURITY: Role is strictly 'customer'
+    // Public registration MUST create Vehicle User accounts only
+    const newUser = new User({
+      username,
+      operatorId: customerId,
+      name: validated.name.trim(),
+      email: email || undefined,
+      phone: phone || undefined,
+      role: 'customer', // HARDCODED - NEVER USER-SELECTABLE
+      authProvider: 'local',
+      passwordHash,
+      vehicles: vehiclesList,
+      permissions: ['view_own_vehicles', 'view_own_passes', 'view_own_history'],
+      isActive: true
+    });
+
+    await newUser.save();
+
+    const { accessToken, refreshToken } = generateTokens(newUser);
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: ENV.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    };
+
+    res.cookie('srf_access_token', accessToken, cookieOptions);
+    res.cookie('srf_refresh_token', refreshToken, cookieOptions);
+
+    await AuditService.log({
+      actor: newUser._id,
+      actorName: newUser.name,
+      actorRole: newUser.role,
+      action: 'CUSTOMER_REGISTERED',
+      entityType: 'User',
+      entityId: newUser.operatorId,
+      details: {
+        username: newUser.username,
+        role: newUser.role,
+        vehiclesCount: newUser.vehicles.length
+      },
+      req
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Vehicle User account created successfully',
+      token: accessToken,
+      refreshToken,
+      user: {
+        _id: newUser._id,
+        username: newUser.username,
+        operatorId: newUser.operatorId,
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+        role: newUser.role,
+        vehicles: newUser.vehicles,
+        permissions: newUser.permissions
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 

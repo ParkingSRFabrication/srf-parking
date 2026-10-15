@@ -171,8 +171,7 @@ export function LandingPage() {
       await verifyOtp({
         email,
         otp: otp.trim(),
-        name: fullName.trim() || undefined,
-        role: 'operator'
+        name: fullName.trim() || undefined
       });
       setAuthModalOpen(false);
       navigate('/dashboard');
@@ -203,7 +202,7 @@ export function LandingPage() {
     }
   };
 
-  // Handle Operator / Admin Login
+  // Handle Operator / Admin / Customer Login
   const handleOperatorLogin = async (e) => {
     e.preventDefault();
     setAuthError(null);
@@ -229,10 +228,14 @@ export function LandingPage() {
       setOperatorId('admin');
       setPassword('Admin@1234');
       setMpin('1234');
-    } else {
+    } else if (type === 'operator') {
       setOperatorId('operator1');
       setPassword('Operator@123');
       setMpin('4321');
+    } else {
+      setOperatorId('customer1');
+      setPassword('Customer@123');
+      setMpin('1111');
     }
     setAuthError(null);
   };
@@ -1920,25 +1923,41 @@ export function LandingPage() {
                   </button>
 
                   {/* 1-Click Test Credentials */}
-                  <div className="pt-2 border-t border-white/10">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1 text-center">
-                      Quick Test Accounts
+                  <div className="pt-2 border-t border-white/10 space-y-2">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block text-center font-mono">
+                      Quick Test Accounts (3 Roles)
                     </span>
-                    <div className="flex gap-2">
+                    <div className="grid grid-cols-3 gap-1.5">
                       <button
                         type="button"
-                        onClick={() => fillDemoCreds('admin')}
-                        className="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] font-mono transition"
+                        onClick={() => fillDemoCreds('customer')}
+                        className="py-1.5 px-1 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 rounded-lg text-[10px] font-mono border border-emerald-500/30 transition truncate"
                       >
-                        Admin (admin)
+                        🚗 Customer
                       </button>
                       <button
                         type="button"
                         onClick={() => fillDemoCreds('operator')}
-                        className="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[11px] font-mono transition"
+                        className="py-1.5 px-1 bg-blue-950/60 hover:bg-blue-900/60 text-cyan-300 rounded-lg text-[10px] font-mono border border-blue-500/30 transition truncate"
                       >
-                        Booth (operator1)
+                        🎫 Operator
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => fillDemoCreds('admin')}
+                        className="py-1.5 px-1 bg-purple-950/60 hover:bg-purple-900/60 text-purple-300 rounded-lg text-[10px] font-mono border border-purple-500/30 transition truncate"
+                      >
+                        👑 Admin
+                      </button>
+                    </div>
+                    <div className="text-center pt-1">
+                      <Link
+                        to="/login"
+                        onClick={() => setAuthModalOpen(false)}
+                        className="text-[11px] text-cyan-400 hover:text-cyan-300 font-bold underline"
+                      >
+                        Open Full Dedicated Role Portal &rarr;
+                      </Link>
                     </div>
                   </div>
                 </form>

@@ -61,15 +61,43 @@ export async function authenticate(req, res, next) {
   }
 }
 
-export function requireAdmin(req, res, next) {
-  if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({
-      success: false,
-      message: 'Administrative privileges required for this action.'
-    });
-  }
-  next();
+export function requireRole(...allowedRoles) {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required. Please log in.'
+      });
+    }
+
+    const userRole = req.user.role;
+    // Normalize customer and commuter
+    const isAllowed = allowedRoles.some(r =>
+      r === userRole ||
+      (r === 'customer' && userRole === 'commuter') ||
+      (r === 'commuter' && userRole === 'customer')
+    );
+
+    if (!isAllowed) {
+      if (allowedRoles.length === 1 && allowedRoles[0] === 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: 'Administrative privileges required for this action.'
+        });
+      }
+      return res.status(403).json({
+        success: false,
+        message: `Access denied. Insufficient privileges for role: ${userRole}. Required: ${allowedRoles.join(' or ')}`
+      });
+    }
+
+    next();
+  };
 }
+
+export const requireAdmin = requireRole('admin');
+export const requireOperatorOrAdmin = requireRole('admin', 'operator');
+export const requireCustomer = requireRole('customer', 'commuter', 'admin');
 
 export function requirePermission(permission) {
   return (req, res, next) => {
@@ -91,3 +119,4 @@ export function requirePermission(permission) {
     });
   };
 }
+
