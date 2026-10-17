@@ -20,18 +20,18 @@ export function ReceiptModal({ isOpen, onClose, data, type = 'entry' }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in no-print-bg">
-      <div className="bg-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-white/10 max-h-[92vh] flex flex-col">
+      <div className="bg-white dark:bg-[#111B21] rounded-2xl sm:rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 dark:border-white/10 max-h-[92vh] flex flex-col">
         {/* Modal Top Bar */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 bg-[#142B4A] text-white shrink-0 no-print border-b border-white/10">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 bg-[#00A884] text-white shrink-0 no-print border-b border-[#008F6F]">
           <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <CheckCircle className="w-5 h-5 text-white" />
             <span className="font-bold text-xs sm:text-sm tracking-wide font-outfit">
               {isEntry ? 'Entry Token Generated' : isPass ? 'Monthly Pass Receipt' : 'Exit & Payment Receipt'}
             </span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-300 hover:text-white rounded-lg hover:bg-white/10 transition"
+            className="p-1 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -184,18 +184,18 @@ export function ReceiptModal({ isOpen, onClose, data, type = 'entry' }) {
         </div>
 
         {/* Modal Actions (No Print) */}
-        <div className="flex items-center gap-3 px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-50 border-t border-slate-200 shrink-0 no-print">
+        <div className="flex items-center gap-3 px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 shrink-0 no-print">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 px-4 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-100 transition text-xs sm:text-sm active:scale-[0.98]"
+            className="flex-1 py-3 px-4 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs sm:text-sm active:scale-[0.98]"
           >
             Close
           </button>
           <button
             type="button"
             onClick={handlePrint}
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-[#142B4A] hover:bg-[#2457A7] text-white font-bold rounded-xl shadow-md transition text-xs sm:text-sm active:scale-[0.98]"
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-[#00A884] hover:bg-[#008F6F] text-white font-bold rounded-xl shadow-md transition text-xs sm:text-sm active:scale-[0.98]"
           >
             <Printer className="w-4 h-4" />
             <span>Print Receipt</span>

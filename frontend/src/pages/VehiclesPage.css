@@ -5,9 +5,9 @@
 }
 
 .vehicle-search-card {
-  background-color: rgba(15, 23, 42, 0.75);
+  background-color: var(--bg-surface);
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
 }
 
 .vehicle-reg-plate {
@@ -15,7 +15,7 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #38BDF8;
+  color: #00A884;
 }
 
 .vehicle-history-timeline {
@@ -28,3 +28,4 @@
     grid-template-columns: 1fr;
   }
 }
+

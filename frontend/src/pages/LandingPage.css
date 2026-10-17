@@ -57,14 +57,14 @@
 
 .landing-card-glow:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 14px 28px -10px rgba(0, 168, 132, 0.25);
 }
 
 /* Mobile Touch Optimization & Scrollable Containers */
 .touch-scroll {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+  scrollbar-color: rgba(0, 168, 132, 0.3) transparent;
 }
 
 .touch-scroll::-webkit-scrollbar {
@@ -72,7 +72,7 @@
 }
 
 .touch-scroll::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.3);
+  background: rgba(0, 168, 132, 0.3);
   border-radius: 4px;
 }
 
@@ -90,6 +90,52 @@
 
 /* Back to Top floating button */
 .back-to-top-btn {
-  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(0, 168, 132, 0.4);
 }
+
+/* Light / Dark Mode Card & Text Harmony for Landing Page */
+.landing-root .glass-card,
+.landing-root .glass-panel {
+  background-color: #FFFFFF;
+  border-color: rgba(226, 232, 240, 0.9);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.dark .landing-root .glass-card,
+html.dark .landing-root .glass-panel {
+  background-color: #111B21;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+.landing-root .glass-card h3,
+.landing-root .glass-panel h3 {
+  color: #0F172A;
+}
+
+html.dark .landing-root .glass-card h3,
+html.dark .landing-root .glass-panel h3 {
+  color: #FFFFFF;
+}
+
+.landing-root .glass-card p,
+.landing-root .glass-panel p {
+  color: #475569;
+}
+
+html.dark .landing-root .glass-card p,
+html.dark .landing-root .glass-panel p {
+  color: #CBD5E1;
+}
+
+.landing-root .glass-card ul,
+.landing-root .glass-panel ul {
+  color: #64748B;
+}
+
+html.dark .landing-root .glass-card ul,
+html.dark .landing-root .glass-panel ul {
+  color: #94A3B8;
+}
+
 

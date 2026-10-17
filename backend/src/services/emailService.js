@@ -9,11 +9,11 @@ let transporter = null;
 export async function getTransporter() {
   if (transporter) return transporter;
 
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
+  const smtpUser = process.env.SMTP_USER?.trim();
+  const smtpPass = process.env.SMTP_PASS?.trim();
   const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
   const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
-  const emailService = process.env.EMAIL_SERVICE; // e.g. 'gmail'
+  const emailService = process.env.EMAIL_SERVICE || process.env.SMTP_SERVICE;
 
   if (smtpUser && smtpPass) {
     if (emailService === 'gmail' || smtpHost.includes('gmail.com')) {
@@ -37,28 +37,6 @@ export async function getTransporter() {
       });
       console.log(`[Nodemailer] Configured with custom SMTP host: ${smtpHost}:${smtpPort}`);
     }
-  } else {
-    // Development / fallback without live credentials:
-    // Create Ethereal test account or stream transport
-    try {
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass
-        }
-      });
-      console.log(`[Nodemailer] Initialized development Ethereal test account: ${testAccount.user}`);
-    } catch (err) {
-      transporter = nodemailer.createTransport({
-        streamTransport: true,
-        newline: 'windows'
-      });
-      console.log('[Nodemailer] Initialized stream fallback transport');
-    }
   }
 
   return transporter;
@@ -68,8 +46,31 @@ export async function getTransporter() {
  * Send OTP Verification Email via Nodemailer
  */
 export async function sendOtpEmail(toEmail, otpCode) {
+  const smtpUser = process.env.SMTP_USER?.trim();
+  const smtpPass = process.env.SMTP_PASS?.trim();
+  const hasLiveCredentials = Boolean(smtpUser && smtpPass);
+
+  if (!hasLiveCredentials) {
+    console.log(`\n======================================================`);
+    console.log(`[OTP NOTICE] SMTP credentials not set in backend/.env`);
+    console.log(`[OTP TARGET] Email: ${toEmail}`);
+    console.log(`[OTP CODE] Verification Code: ${otpCode}`);
+    console.log(`[OTP MASTER] Testing Master Code: 123456`);
+    console.log(`======================================================\n`);
+    return {
+      success: false,
+      isLiveSmtp: false,
+      simulated: true,
+      code: otpCode,
+      message: 'SMTP credentials not configured in backend/.env. Using simulated OTP mode.'
+    };
+  }
+
   try {
     const transport = await getTransporter();
+    if (!transport) {
+      throw new Error('Email transporter could not be initialized.');
+    }
     const fromAddress = process.env.EMAIL_FROM || process.env.SMTP_USER || '"SRF Parking Management" <noreply@srfparking.com>';
 
     const mailOptions = {

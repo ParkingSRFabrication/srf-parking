@@ -2,19 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   ARATTAI DESIGN SYSTEM - THEME TOKENS
+   Zoho Arattai-inspired Clean, Friendly & Ergonomic Aesthetics
+   ========================================================================== */
+
 :root {
-  --bg-main: #090D16;
-  --bg-surface: #0F172A;
-  --bg-card: rgba(17, 24, 39, 0.75);
+  /* Arattai Light Theme Tokens (White Mode) */
+  --bg-main: #F0F2F5;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --border-subtle: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --text-subtle: #94A3B8;
+  --primary-accent: #00A884;
+  --primary-accent-hover: #008F6F;
+  --primary-accent-light: rgba(0, 168, 132, 0.12);
+  --primary-glow: rgba(0, 168, 132, 0.25);
+  --shadow-surface: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 14px -2px rgba(0, 0, 0, 0.05);
+}
+
+html.dark {
+  /* Arattai Dark Theme Tokens (Deep Slate) */
+  --bg-main: #0B141A;
+  --bg-surface: #111B21;
+  --bg-elevated: #1F2C34;
+  --bg-card: #182229;
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --primary-accent: #6366F1;
-  --glow-cyan: #06B6D4;
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-main: #E9EDEF;
+  --text-muted: #8696A0;
+  --text-subtle: #667781;
+  --primary-accent: #00A884;
+  --primary-accent-hover: #02b690;
+  --primary-accent-light: rgba(0, 168, 132, 0.2);
+  --primary-glow: rgba(0, 168, 132, 0.35);
+  --shadow-surface: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
 html, body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #090D16;
-  color: #F8FAFC;
+  background-color: var(--bg-main);
+  color: var(--text-main);
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
@@ -22,6 +56,7 @@ html, body {
   overflow-x: hidden;
   width: 100%;
   min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 h1, h2, h3, h4, .font-heading {
@@ -32,44 +67,89 @@ code, pre, .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Glassmorphism Surface Classes */
+/* ==========================================================================
+   ARATTAI ADAPTIVE SURFACES
+   ========================================================================== */
+
 .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-surface);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.dark .glass-panel {
+  background: rgba(17, 27, 33, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 .glass-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-surface);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .glass-card {
   background: rgba(30, 41, 59, 0.55);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 1rem;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 12px 30px -8px rgba(99, 102, 241, 0.15);
+  border-color: rgba(0, 168, 132, 0.4);
+  box-shadow: 0 8px 24px -4px rgba(0, 168, 132, 0.15);
+}
+
+/* Arattai Card Component Utility */
+.arattai-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s ease;
+}
+
+.arattai-btn-primary {
+  background-color: #00A884;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease;
+}
+.arattai-btn-primary:hover {
+  background-color: #008F6F;
+  box-shadow: 0 4px 14px 0 rgba(0, 168, 132, 0.35);
+}
+.arattai-btn-primary:active {
+  transform: scale(0.98);
 }
 
 /* Gradient Text */
 .gradient-text-primary {
+  background: linear-gradient(135deg, #0F172A 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dark .gradient-text-primary {
   background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 50%, #94A3B8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-text-accent {
-  background: linear-gradient(135deg, #60A5FA 0%, #818CF8 50%, #C084FC 100%);
+  background: linear-gradient(135deg, #00A884 0%, #10B981 50%, #06B6D4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-text-emerald {
-  background: linear-gradient(135deg, #34D399 0%, #10B981 50%, #059669 100%);
+  background: linear-gradient(135deg, #10B981 0%, #00A884 50%, #00755B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -94,14 +174,14 @@ button, input, select, textarea, a {
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #090D16;
+  background: var(--bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: var(--border-strong);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--primary-accent);
 }
 
 /* Animations */
@@ -118,17 +198,6 @@ button, input, select, textarea, a {
 
 .pulse-glow {
   animation: pulseGlow 2.5s infinite ease-in-out;
-}
-
-/* Standalone PWA Enhancements */
-@media (display-mode: standalone) {
-  body {
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .pwa-only {
-    display: block !important;
-  }
 }
 
 /* Thermal POS receipt print styles */
@@ -148,7 +217,7 @@ button, input, select, textarea, a {
     padding: 10px;
     background: white;
     color: black;
-    font-family: 'JetBrains Mono', monospace, monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     line-height: 1.3;
   }

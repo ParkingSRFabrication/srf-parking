@@ -85,18 +85,18 @@ export function DashboardPage() {
   const recentActivity = data?.recentActivity || [];
 
   return (
-    <div className="space-y-6 animate-fade-in text-slate-100">
+    <div className="space-y-6 animate-fade-in text-slate-900 dark:text-slate-100">
       {/* Top Header & Quick Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[11px] font-bold text-cyan-400 mb-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#00A884]/10 border border-[#00A884]/20 rounded-full text-[11px] font-bold text-[#00A884] mb-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00A884] animate-pulse" />
             <span>CENTRAL STATION • TERMINAL OS</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black font-outfit text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">
             Operational Telemetry
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Real-time station vehicle movement, live occupancy, and collections summary
           </p>
         </div>
@@ -105,31 +105,31 @@ export function DashboardPage() {
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5">
           <Link
             to="/entry"
-            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-glowEmerald transition"
+            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#00A884] hover:bg-[#008F6F] text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-[0.98]"
           >
-            <ArrowDownRight className="w-4 h-4 text-emerald-200" />
+            <ArrowDownRight className="w-4 h-4 text-emerald-100" />
             <span>Vehicle Entry</span>
           </Link>
 
           <Link
             to="/exit"
-            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white rounded-xl text-xs font-bold shadow-glow transition"
+            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-[0.98]"
           >
-            <ArrowUpRight className="w-4 h-4 text-cyan-200" />
+            <ArrowUpRight className="w-4 h-4 text-sky-100" />
             <span>Vehicle Exit</span>
           </Link>
 
           <Link
             to="/monthly-pass"
-            className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-slate-800/80 hover:bg-slate-700/80 text-white border border-white/10 rounded-xl text-xs font-bold transition"
+            className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-white dark:bg-[#111B21] hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold transition shadow-xs"
           >
-            <CreditCard className="w-4 h-4 text-purple-300" />
+            <CreditCard className="w-4 h-4 text-purple-500" />
             <span>New Pass</span>
           </Link>
 
           <Link
             to="/#manual"
-            className="flex items-center justify-center gap-1.5 px-3 py-2.5 bg-slate-800/80 hover:bg-slate-700/80 text-cyan-300 border border-cyan-500/20 rounded-xl text-xs font-bold transition"
+            className="flex items-center justify-center gap-1.5 px-3 py-2.5 bg-white dark:bg-[#111B21] hover:bg-slate-50 dark:hover:bg-slate-800/50 text-[#00A884] border border-[#00A884]/30 rounded-xl text-xs font-bold transition shadow-xs"
             title="Open User Manual"
           >
             <BookOpen className="w-4 h-4" />
@@ -139,90 +139,90 @@ export function DashboardPage() {
           <button
             onClick={fetchDashboardData}
             title="Refresh Data"
-            className="flex items-center justify-center gap-1.5 p-2.5 bg-slate-800/80 border border-white/10 text-slate-300 rounded-xl hover:bg-slate-700 transition shadow-xs text-xs font-semibold"
+            className="flex items-center justify-center gap-1.5 p-2.5 bg-white dark:bg-[#111B21] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition shadow-xs text-xs font-semibold"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 text-slate-500 dark:text-slate-400 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-500/15 border border-rose-500/30 rounded-2xl text-rose-300 text-xs font-medium flex items-center justify-between">
+        <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-2xl text-rose-700 dark:text-rose-300 text-xs font-medium flex items-center justify-between">
           <span>{error}</span>
-          <button onClick={fetchDashboardData} className="underline font-bold text-rose-200">Retry</button>
+          <button onClick={fetchDashboardData} className="underline font-bold text-rose-700 dark:text-rose-200">Retry</button>
         </div>
       )}
 
       {/* Primary KPI Metrics Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Vehicles Inside */}
-        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/10 flex items-center gap-3.5">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center shrink-0">
+        <div className="bg-white dark:bg-[#111B21] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-xs flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#00A884]/10 border border-[#00A884]/20 text-[#00A884] flex items-center justify-center shrink-0">
             <Car className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
               Inside Lot
             </div>
-            <div className="text-xl sm:text-2xl font-black font-mono text-white mt-0.5">
+            <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white mt-0.5">
               {summary.vehiclesInside ?? 0}
             </div>
-            <div className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <div className="text-[10px] text-[#00A884] font-semibold flex items-center gap-1 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00A884] animate-pulse shrink-0" />
               <span>Real-time</span>
             </div>
           </div>
         </div>
 
         {/* Entries Today */}
-        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/10 flex items-center gap-3.5">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+        <div className="bg-white dark:bg-[#111B21] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-xs flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
             <ArrowDownRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
               Entries Today
             </div>
-            <div className="text-xl sm:text-2xl font-black font-mono text-white mt-0.5">
+            <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white mt-0.5">
               {summary.entriesToday ?? 0}
             </div>
-            <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
               Tokens issued
             </div>
           </div>
         </div>
 
         {/* Exits Today */}
-        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/10 flex items-center gap-3.5">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+        <div className="bg-white dark:bg-[#111B21] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-xs flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
             <ArrowUpRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
               Exits Today
             </div>
-            <div className="text-xl sm:text-2xl font-black font-mono text-white mt-0.5">
+            <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white mt-0.5">
               {summary.exitsToday ?? 0}
             </div>
-            <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
               Processed
             </div>
           </div>
         </div>
 
         {/* Net Collections Today */}
-        <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/10 flex items-center gap-3.5">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0">
+        <div className="bg-white dark:bg-[#111B21] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-xs flex items-center gap-3.5">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
             <IndianRupee className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
               Net Revenue
             </div>
-            <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400 mt-0.5 truncate">
+            <div className="text-xl sm:text-2xl font-black font-mono text-[#00A884] mt-0.5 truncate">
               {formatCurrency(summary.netRevenueToday ?? 0)}
             </div>
-            <div className="text-[10px] text-slate-400 font-medium mt-0.5">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
               Today's collections
             </div>
           </div>
@@ -230,28 +230,28 @@ export function DashboardPage() {
       </div>
 
       {/* Secondary Metrics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-900/80 rounded-2xl border border-white/10 text-xs">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-white dark:bg-[#111B21] rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-xs text-xs">
         <div>
-          <span className="text-slate-400 block text-[11px]">Gross Revenue:</span>
-          <span className="font-bold font-mono text-white text-sm">
+          <span className="text-slate-500 dark:text-slate-400 block text-[11px]">Gross Revenue:</span>
+          <span className="font-bold font-mono text-slate-900 dark:text-white text-sm">
             {formatCurrency(summary.grossRevenueToday ?? 0)}
           </span>
         </div>
         <div>
-          <span className="text-slate-400 block text-[11px]">Refunds / Adjustments:</span>
-          <span className="font-bold font-mono text-rose-400 text-sm">
+          <span className="text-slate-500 dark:text-slate-400 block text-[11px]">Refunds / Adjustments:</span>
+          <span className="font-bold font-mono text-rose-600 dark:text-rose-400 text-sm">
             {formatCurrency(summary.refundsToday ?? 0)}
           </span>
         </div>
         <div>
-          <span className="text-slate-400 block text-[11px]">Active Monthly Passes:</span>
-          <span className="font-bold font-mono text-emerald-400 text-sm">
+          <span className="text-slate-500 dark:text-slate-400 block text-[11px]">Active Monthly Passes:</span>
+          <span className="font-bold font-mono text-[#00A884] text-sm">
             {summary.activePasses ?? 0} Passes
           </span>
         </div>
         <div>
-          <span className="text-slate-400 block text-[11px]">Expiring Passes (≤5d):</span>
-          <span className="font-bold font-mono text-amber-400 text-sm">
+          <span className="text-slate-500 dark:text-slate-400 block text-[11px]">Expiring Passes (≤5d):</span>
+          <span className="font-bold font-mono text-amber-600 dark:text-amber-400 text-sm">
             {summary.expiringPasses ?? 0} Alerts
           </span>
         </div>
@@ -260,9 +260,9 @@ export function DashboardPage() {
       {/* Visual Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Vehicles Inside by Type */}
-        <div className="glass-panel p-5 rounded-2xl border border-white/10">
-          <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Car className="w-4 h-4 text-cyan-400" />
+        <div className="bg-white dark:bg-[#111B21] p-5 rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-xs">
+          <h2 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Car className="w-4 h-4 text-[#00A884]" />
             Occupancy Breakdown by Vehicle Type
           </h2>
 
@@ -278,11 +278,11 @@ export function DashboardPage() {
                   />
                   <YAxis allowDecimals={false} stroke="#94A3B8" tick={{ fontSize: 11, fill: '#94A3B8' }} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', borderRadius: '12px' }}
+                    contentStyle={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)', borderRadius: '12px', color: 'var(--text-main)' }}
                     formatter={(val) => [`${val} Vehicles`, 'Inside']}
                     labelFormatter={(val) => CATEGORY_LABELS[val] || val}
                   />
-                  <Bar dataKey="count" fill="#6366F1" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="count" fill="#00A884" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -295,9 +295,9 @@ export function DashboardPage() {
         </div>
 
         {/* Payment Methods Today */}
-        <div className="glass-panel p-5 rounded-2xl border border-white/10">
-          <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-            <IndianRupee className="w-4 h-4 text-emerald-400" />
+        <div className="bg-white dark:bg-[#111B21] p-5 rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-xs">
+          <h2 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <IndianRupee className="w-4 h-4 text-[#00A884]" />
             Payment Collections by Mode (Today)
           </h2>
 
@@ -319,7 +319,7 @@ export function DashboardPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', borderRadius: '12px' }}
+                    contentStyle={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-subtle)', borderRadius: '12px', color: 'var(--text-main)' }}
                     formatter={(val) => [formatCurrency(val), 'Amount Collected']}
                   />
                 </PieChart>
@@ -335,15 +335,15 @@ export function DashboardPage() {
       </div>
 
       {/* Recent Activity Table & Mobile Cards */}
-      <div className="glass-panel rounded-2xl border border-white/10 overflow-hidden">
-        <div className="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between">
-          <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <ArrowDownRight className="w-4 h-4 text-cyan-400" />
+      <div className="bg-white dark:bg-[#111B21] rounded-2xl border border-slate-200/90 dark:border-white/10 shadow-xs overflow-hidden">
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
+          <h2 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+            <ArrowDownRight className="w-4 h-4 text-[#00A884]" />
             Live Station Activity Log
           </h2>
           <Link
             to="/tokens"
-            className="text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1"
+            className="text-xs font-semibold text-[#00A884] hover:text-[#008F6F] transition flex items-center gap-1"
           >
             <span>View All Records</span>
             <Search className="w-3.5 h-3.5" />
@@ -351,16 +351,16 @@ export function DashboardPage() {
         </div>
 
         {recentActivity.length > 0 ? (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-slate-100 dark:divide-white/5">
             {recentActivity.slice(0, 5).map((item) => (
-              <div key={item._id} className="p-3.5 sm:p-4 flex items-center justify-between gap-3 text-xs">
+              <div key={item._id} className="p-3.5 sm:p-4 flex items-center justify-between gap-3 text-xs hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-lg bg-[#00A884]/10 text-[#00A884] flex items-center justify-center font-bold">
                     <Car className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-bold text-white font-mono">{item.vehicleNumber}</div>
-                    <div className="text-[10px] text-slate-400">Token: {item.tokenNumber}</div>
+                    <div className="font-bold text-slate-900 dark:text-white font-mono">{item.vehicleNumber}</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">Token: {item.tokenNumber}</div>
                   </div>
                 </div>
                 <div className="text-right">
