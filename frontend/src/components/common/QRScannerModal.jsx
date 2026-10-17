@@ -61,15 +61,15 @@ export function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-slate-900 rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden border border-white/10 text-white">
-        <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 bg-[#142B4A] text-white border-b border-white/10">
+      <div className="bg-white dark:bg-[#111B21] rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white">
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 sm:py-4 bg-[#00A884] text-white border-b border-[#008F6F]">
           <div className="flex items-center gap-2">
-            <Camera className="w-5 h-5 text-cyan-300" />
+            <Camera className="w-5 h-5 text-white" />
             <h3 className="font-bold text-xs sm:text-sm font-outfit">Optical Camera QR Scanner</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-300 hover:text-white rounded-lg hover:bg-white/10 transition"
+            className="p-1.5 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition"
             aria-label="Close scanner"
           >
             <X className="w-5 h-5" />
@@ -79,24 +79,24 @@ export function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
         <div className="p-4 sm:p-5 flex flex-col items-center">
           <div
             id="qr-reader-container"
-            className="w-full aspect-square bg-slate-950 rounded-2xl overflow-hidden border-2 border-dashed border-cyan-500/40 relative shadow-inner"
+            className="w-full aspect-square bg-slate-900 rounded-2xl overflow-hidden border-2 border-dashed border-[#00A884]/40 relative shadow-inner"
           />
 
           {error && (
-            <div className="mt-3 p-3 bg-rose-500/15 text-rose-300 text-xs rounded-xl flex items-start gap-2 border border-rose-500/20">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+            <div className="mt-3 p-3 bg-rose-500/10 dark:bg-rose-500/15 text-rose-800 dark:text-rose-300 text-xs rounded-xl flex items-start gap-2 border border-rose-500/20">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" />
               <span>{error}</span>
             </div>
           )}
 
-          <p className="text-xs text-slate-400 text-center mt-3">
+          <p className="text-xs text-slate-500 dark:text-slate-400 text-center mt-3">
             Align the QR code on the printed slip inside the viewfinder.
           </p>
 
           <button
             type="button"
             onClick={onClose}
-            className="mt-4 w-full py-3 bg-slate-800 hover:bg-slate-700 active:scale-[0.99] text-slate-200 text-xs sm:text-sm font-bold rounded-xl transition border border-white/5"
+            className="mt-4 w-full py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.99] text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold rounded-xl transition border border-slate-200 dark:border-white/5"
           >
             Cancel & Enter Manually
           </button>

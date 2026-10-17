@@ -144,23 +144,27 @@ export function MonthlyPassPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
+    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in text-slate-800 dark:text-slate-100">
       {/* Title */}
       <div>
-        <h1 className="text-2xl font-black text-[#142B4A] tracking-tight">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#00A884]/10 border border-[#00A884]/30 rounded-full text-[11px] font-bold text-[#00A884] mb-1 font-mono">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00A884] animate-pulse" />
+          <span>COMMUTER PASS ISSUANCE • PLAZA DESK</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">
           Issue Monthly Parking Pass
         </h1>
-        <p className="text-xs text-slate-500 mt-0.5">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
           Create long-term parking passes for daily railway commuters with calendar-month validity
         </p>
       </div>
 
       {/* Duplicate Warning */}
       {duplicateWarning && (
-        <div className="p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl flex items-start gap-3 text-amber-900">
-          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+        <div className="p-4 bg-amber-500/10 dark:bg-amber-500/15 border-2 border-amber-500/30 rounded-2xl flex items-start gap-3 text-amber-900 dark:text-amber-200">
+          <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
           <div className="text-xs">
-            <span className="font-bold text-sm block mb-1">
+            <span className="font-bold text-sm block mb-1 text-amber-800 dark:text-amber-300">
               Active Pass Already Exists!
             </span>
             <p>{duplicateWarning.message}</p>
@@ -169,18 +173,18 @@ export function MonthlyPassPage() {
       )}
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-xs font-semibold flex items-center gap-2">
-          <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
+        <div className="p-4 bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/30 rounded-2xl text-rose-800 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
+          <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Form Card */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8">
+      <div className="bg-white dark:bg-[#111B21] rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-2xl p-6 sm:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Duration Selector */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2 font-mono">
               Pass Duration Period
             </label>
             <div className="grid grid-cols-3 gap-3">
@@ -195,21 +199,21 @@ export function MonthlyPassPage() {
                   onClick={() => handleDurationChange(opt.months)}
                   className={`p-3.5 rounded-2xl border text-center transition ${
                     durationMonths === opt.months
-                      ? 'border-[#2457A7] bg-blue-50/70 shadow-xs ring-2 ring-[#2457A7]/20 font-bold text-[#142B4A]'
-                      : 'border-slate-200 hover:border-slate-300 text-slate-700'
+                      ? 'border-[#00A884] bg-[#00A884]/10 dark:bg-[#00A884]/20 shadow-xs ring-2 ring-[#00A884]/30 font-bold text-[#00A884]'
+                      : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 text-slate-700 dark:text-slate-300 bg-slate-50/50 dark:bg-slate-900/40'
                   }`}
                 >
                   <div className="text-sm font-bold">{opt.label}</div>
-                  <div className="text-[10px] text-slate-500 mt-0.5">{opt.desc}</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{opt.desc}</div>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Vehicle Info */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-white/10">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Vehicle Registration (Required)
               </label>
               <input
@@ -218,21 +222,21 @@ export function MonthlyPassPage() {
                 placeholder="e.g. KA03MG4567"
                 value={vehicleNumber}
                 onChange={(e) => setVehicleNumber(normalizeVehicleNumber(e.target.value))}
-                className="w-full px-4 py-2.5 font-mono font-bold text-sm uppercase bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                className="w-full px-4 py-3 font-mono font-bold text-sm uppercase bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884] focus:ring-1 focus:ring-[#00A884] transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Vehicle Category
               </label>
               <select
                 value={vehicleType}
                 onChange={(e) => handleTypeChange(e.target.value)}
-                className="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition capitalize"
+                className="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884] focus:ring-1 focus:ring-[#00A884] transition capitalize"
               >
                 {availableCategories.map(cat => (
-                  <option key={cat.key} value={cat.key}>
+                  <option key={cat.key} value={cat.key} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                     {cat.label} (₹{cat.monthlyRate}/mo)
                   </option>
                 ))}
@@ -243,7 +247,7 @@ export function MonthlyPassPage() {
           {/* Customer Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Commuter / Customer Name (Required)
               </label>
               <div className="relative">
@@ -254,13 +258,13 @@ export function MonthlyPassPage() {
                   placeholder="Full name of pass holder"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                  className="w-full pl-9 pr-4 py-3 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884] focus:ring-1 focus:ring-[#00A884] transition"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Mobile Number (Optional)
               </label>
               <div className="relative">
@@ -271,16 +275,16 @@ export function MonthlyPassPage() {
                   placeholder="10-digit mobile"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="w-full pl-9 pr-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                  className="w-full pl-9 pr-4 py-3 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884] focus:ring-1 focus:ring-[#00A884] transition"
                 />
               </div>
             </div>
           </div>
 
           {/* Dates & Billing */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-white/10">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Start Date
               </label>
               <input
@@ -288,12 +292,12 @@ export function MonthlyPassPage() {
                 required
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                className="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884] focus:ring-1 focus:ring-[#00A884] transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Pass Fee Amount (₹)
               </label>
               <input
@@ -303,7 +307,7 @@ export function MonthlyPassPage() {
                 required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-4 py-3 font-bold text-base bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7] focus:bg-white transition"
+                className="w-full px-4 py-3 font-mono font-bold text-base bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884] focus:ring-1 focus:ring-[#00A884] transition"
               />
             </div>
           </div>
@@ -311,23 +315,23 @@ export function MonthlyPassPage() {
           {/* Payment Method */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Payment Collection Method
               </label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7]"
+                className="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884]"
               >
-                <option value="CASH">CASH</option>
-                <option value="UPI">UPI</option>
-                <option value="CARD">CARD</option>
-                <option value="OTHER">OTHER</option>
+                <option value="CASH" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">CASH</option>
+                <option value="UPI" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">UPI</option>
+                <option value="CARD" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">CARD</option>
+                <option value="OTHER" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">OTHER</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Payment Reference / Notes
               </label>
               <input
@@ -335,23 +339,23 @@ export function MonthlyPassPage() {
                 placeholder="e.g. UPI UTR number or receipt reference"
                 value={paymentReference}
                 onChange={(e) => setPaymentReference(e.target.value)}
-                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2457A7]"
+                className="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884]"
               />
             </div>
           </div>
 
           {/* Submit */}
-          <div className="pt-4 border-t border-slate-100">
+          <div className="pt-4 border-t border-slate-100 dark:border-white/10">
             <button
               type="submit"
               disabled={loading || !vehicleNumber || !customerName}
-              className="w-full min-h-[52px] py-4 px-6 bg-[#142B4A] hover:bg-[#2457A7] active:scale-[0.99] text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full min-h-[52px] py-4 px-6 bg-[#00A884] hover:bg-[#008F6F] active:scale-[0.99] text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <CreditCard className="w-5 h-5 text-purple-300 shrink-0" />
+                  <CreditCard className="w-5 h-5 text-white/90 shrink-0" />
                   <span>Issue Pass ({formatCurrency(amount)}) & Generate Slip</span>
                 </>
               )}

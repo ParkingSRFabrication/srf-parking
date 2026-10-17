@@ -22,11 +22,14 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { BrandLogo } from '../common/BrandLogo.jsx';
+import { ThemeToggle } from '../common/ThemeToggle.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
 import './Sidebar.css';
 
 export function Sidebar({ isOpen, onClose }) {
   const { user, isAdmin, isOperator, isCustomer, logout, getDashboardPath } = useAuth();
+  const { isDark } = useTheme();
 
   const customerNavItems = [
     { label: 'Customer Dashboard', path: '/customer/dashboard', icon: LayoutDashboard },
@@ -68,7 +71,7 @@ export function Sidebar({ isOpen, onClose }) {
       {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="mobile-sidebar-backdrop fixed inset-0 z-[70] bg-black/75 backdrop-blur-sm lg:hidden no-print"
+          className="mobile-sidebar-backdrop fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm lg:hidden no-print transition-opacity"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -77,23 +80,23 @@ export function Sidebar({ isOpen, onClose }) {
       {/* Sidebar container */}
       <aside
         onClick={(e) => e.stopPropagation()}
-        className={`mobile-sidebar-drawer fixed top-0 bottom-0 left-0 z-[80] w-72 max-w-[85vw] bg-[#0B1120] text-slate-100 border-r border-white/10 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-          isOpen ? 'translate-x-0 drawer-open' : '-translate-x-full drawer-closed'
+        className={`mobile-sidebar-drawer fixed top-0 bottom-0 left-0 z-[80] w-72 max-w-[85vw] bg-white dark:bg-[#111B21] text-slate-800 dark:text-slate-100 border-r border-slate-200 dark:border-white/10 flex flex-col transition-all duration-300 ease-in-out lg:translate-x-0 ${
+          isOpen ? 'translate-x-0 drawer-open shadow-2xl' : '-translate-x-full drawer-closed'
         } no-print`}
         aria-label="Navigation Sidebar"
       >
         {/* Brand Header */}
-        <div className="flex items-center justify-between gap-2 p-4 sm:p-5 border-b border-white/10 min-w-0">
+        <div className="flex items-center justify-between gap-2 p-4 sm:p-5 border-b border-slate-200 dark:border-white/10 min-w-0">
           <Link to={getDashboardPath()} className="min-w-0 flex-1 overflow-hidden" onClick={() => { if (window.innerWidth < 1024) onClose(); }}>
-            <BrandLogo inverted={true} />
+            <BrandLogo inverted={isDark} />
           </Link>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-xl lg:hidden hover:bg-white/10 active:scale-95 transition min-w-[36px] min-h-[36px] flex items-center justify-center shrink-0"
+            className="p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl lg:hidden hover:bg-slate-100 dark:hover:bg-white/10 active:scale-95 transition min-w-[36px] min-h-[36px] flex items-center justify-center shrink-0"
             aria-label="Close navigation sidebar"
           >
-            <X className="w-5 h-5 text-slate-300" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -103,8 +106,8 @@ export function Sidebar({ isOpen, onClose }) {
           {/* 1. CUSTOMER PORTAL NAVIGATION */}
           {isCustomer && (
             <div>
-              <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
-                <Car className="w-3 h-3" />
+              <div className="text-[10px] font-bold text-[#00A884] uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
+                <Car className="w-3 h-3 text-[#00A884]" />
                 <span>Vehicle Owner Portal</span>
               </div>
               <nav className="space-y-1">
@@ -120,12 +123,12 @@ export function Sidebar({ isOpen, onClose }) {
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
                           isActive
-                            ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-glow'
-                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                            ? 'bg-[#00A884]/15 dark:bg-[#00A884]/25 text-[#00755B] dark:text-[#2DD4BF] font-bold border border-[#00A884]/30'
+                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                         }`
                       }
                     >
-                      <Icon className="w-4 h-4 shrink-0 text-emerald-400" />
+                      <Icon className="w-4 h-4 shrink-0 text-[#00A884]" />
                       <span>{item.label}</span>
                     </NavLink>
                   );
@@ -137,8 +140,8 @@ export function Sidebar({ isOpen, onClose }) {
           {/* 2. OPERATOR TERMINAL NAVIGATION */}
           {isOperator && (
             <div>
-              <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
-                <Ticket className="w-3 h-3" />
+              <div className="text-[10px] font-bold text-[#00A884] uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
+                <Ticket className="w-3 h-3 text-[#00A884]" />
                 <span>Terminal Operations</span>
               </div>
               <nav className="space-y-1">
@@ -154,12 +157,12 @@ export function Sidebar({ isOpen, onClose }) {
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
                           isActive
-                            ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-bold shadow-glow'
-                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                            ? 'bg-[#00A884]/15 dark:bg-[#00A884]/25 text-[#00755B] dark:text-[#2DD4BF] font-bold border border-[#00A884]/30'
+                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                         }`
                       }
                     >
-                      <Icon className="w-4 h-4 shrink-0 text-cyan-400" />
+                      <Icon className="w-4 h-4 shrink-0 text-[#00A884]" />
                       <span>{item.label}</span>
                     </NavLink>
                   );
@@ -172,8 +175,8 @@ export function Sidebar({ isOpen, onClose }) {
           {isAdmin && (
             <>
               <div>
-                <div className="text-[10px] font-bold text-purple-400 uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
-                  <ShieldCheck className="w-3 h-3" />
+                <div className="text-[10px] font-bold text-[#00A884] uppercase tracking-widest px-3 mb-2 font-mono flex items-center gap-1.5">
+                  <ShieldCheck className="w-3 h-3 text-[#00A884]" />
                   <span>Railway Administration</span>
                 </div>
                 <nav className="space-y-1">
@@ -189,12 +192,12 @@ export function Sidebar({ isOpen, onClose }) {
                         className={({ isActive }) =>
                           `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
                             isActive
-                              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold shadow-glow'
-                              : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                              ? 'bg-[#00A884]/15 dark:bg-[#00A884]/25 text-[#00755B] dark:text-[#2DD4BF] font-bold border border-[#00A884]/30'
+                              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                           }`
                         }
                       >
-                        <Icon className="w-4 h-4 shrink-0 text-purple-400" />
+                        <Icon className="w-4 h-4 shrink-0 text-[#00A884]" />
                         <span>{item.label}</span>
                       </NavLink>
                     );
@@ -203,7 +206,7 @@ export function Sidebar({ isOpen, onClose }) {
               </div>
 
               <div>
-                <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest px-3 mb-2 font-mono">
+                <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest px-3 mb-2 font-mono">
                   Station Gate Operations
                 </div>
                 <nav className="space-y-1">
@@ -219,12 +222,12 @@ export function Sidebar({ isOpen, onClose }) {
                         className={({ isActive }) =>
                           `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-xs transition ${
                             isActive
-                              ? 'bg-white/10 text-white font-bold'
-                              : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                              ? 'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white font-bold'
+                              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                           }`
                         }
                       >
-                        <Icon className="w-4 h-4 shrink-0 text-cyan-400" />
+                        <Icon className="w-4 h-4 shrink-0 text-[#00A884]" />
                         <span>{item.label}</span>
                       </NavLink>
                     );
@@ -235,15 +238,15 @@ export function Sidebar({ isOpen, onClose }) {
           )}
 
           {/* Quick Landing Page & Manual link */}
-          <div className="pt-2 border-t border-white/5">
+          <div className="pt-2 border-t border-slate-200 dark:border-white/5 space-y-1">
             <Link
               to="/#manual"
               onClick={() => {
                 if (window.innerWidth < 1024) onClose();
               }}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5 hover:text-white transition"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition"
             >
-              <BookOpen className="w-4 h-4 text-cyan-400" />
+              <BookOpen className="w-4 h-4 text-cyan-500" />
               <span>User Manuals</span>
             </Link>
             <Link
@@ -251,32 +254,41 @@ export function Sidebar({ isOpen, onClose }) {
               onClick={() => {
                 if (window.innerWidth < 1024) onClose();
               }}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/5 hover:text-white transition"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition"
             >
-              <Home className="w-4 h-4 text-emerald-400" />
+              <Home className="w-4 h-4 text-[#00A884]" />
               <span>Landing Page</span>
             </Link>
           </div>
         </div>
 
+        {/* Arattai Light / Dark Theme Switcher in Sidebar (Requested) */}
+        <div className="px-4 py-3 border-t border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-slate-900/30">
+          <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 font-mono flex items-center justify-between">
+            <span>Appearance</span>
+            <span className="text-[9px] text-[#00A884] font-bold">Arattai OS</span>
+          </div>
+          <ThemeToggle variant="sidebar" />
+        </div>
+
         {/* Footer info & Mobile Logout */}
-        <div className="p-4 border-t border-white/10 text-center space-y-3">
+        <div className="p-4 border-t border-slate-200 dark:border-white/10 text-center space-y-2.5">
           <button
             type="button"
             onClick={() => {
               onClose();
               logout();
             }}
-            className="w-full lg:hidden flex items-center justify-center gap-2 py-2.5 px-3 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-xl text-xs font-bold transition border border-rose-500/30 active:scale-95"
+            className="w-full lg:hidden flex items-center justify-center gap-2 py-2.5 px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-300 rounded-xl text-xs font-bold transition border border-rose-500/30 active:scale-95"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out Session</span>
           </button>
           <div>
-            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
               SR FABRICATION RAILWAY OS
             </div>
-            <div className="text-[9px] text-cyan-400 font-mono mt-0.5">
+            <div className="text-[9px] text-[#00A884] font-mono mt-0.5">
               Production v2.0 • ISO Certified
             </div>
           </div>

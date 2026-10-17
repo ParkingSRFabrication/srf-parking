@@ -5,15 +5,27 @@
 }
 
 .operator-badge-admin {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #D97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.dark .operator-badge-admin {
   background-color: rgba(245, 158, 11, 0.2);
   color: #FCD34D;
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .operator-badge-staff {
-  background-color: rgba(99, 102, 241, 0.2);
-  color: #A5B4FC;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background-color: rgba(0, 168, 132, 0.12);
+  color: #00A884;
+  border: 1px solid rgba(0, 168, 132, 0.3);
+}
+
+.dark .operator-badge-staff {
+  background-color: rgba(0, 168, 132, 0.2);
+  color: #00A884;
+  border: 1px solid rgba(0, 168, 132, 0.3);
 }
 
 .operator-modal-backdrop {
@@ -24,10 +36,11 @@
 @media (max-width: 640px) {
   .operator-card-item {
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
   }
   .operator-card-item:active {
     transform: scale(0.99);
   }
 }
+

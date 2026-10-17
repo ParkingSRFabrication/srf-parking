@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 import { AppLayout } from './components/layout/AppLayout.jsx';
 import './App.css';
 
@@ -83,8 +84,9 @@ function RoleDashboardRedirect() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
         <Routes>
           {/* Public Landing Page & User Manual */}
           <Route path="/" element={<LandingPage />} />
@@ -252,5 +254,6 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+  </ThemeProvider>
   );
 }

@@ -13,12 +13,12 @@ export function AppLayout() {
   const { canInstall, isInstalled, install, isIOS } = usePWAInstall();
 
   return (
-    <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col antialiased selection:bg-indigo-600 selection:text-white">
+    <div className="min-h-screen bg-[#F0F2F5] dark:bg-[#0B141A] text-slate-800 dark:text-slate-100 flex flex-col antialiased selection:bg-[#00A884] selection:text-white transition-colors duration-200">
       {/* Mobile PWA Install Floating Banner */}
       {!isInstalled && !dismissInstallBanner && (canInstall || isIOS) && (
-        <div className="lg:hidden relative z-20 bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900 border-b border-indigo-500/30 px-3.5 py-2 flex items-center justify-between text-xs shadow-lg">
+        <div className="lg:hidden relative z-20 bg-slate-900 dark:bg-[#111B21] border-b border-slate-700 dark:border-white/10 px-3.5 py-2 flex items-center justify-between text-xs shadow-lg">
           <div className="flex items-center gap-2">
-            <Smartphone className="w-4 h-4 text-emerald-400 shrink-0 animate-bounce" />
+            <Smartphone className="w-4 h-4 text-[#00A884] shrink-0 animate-bounce" />
             <span className="text-white font-medium text-[11px]">
               Use as native mobile app for faster gate operation!
             </span>
@@ -29,7 +29,7 @@ export function AppLayout() {
                 if (canInstall) install();
                 else alert('On iPhone: Tap Share -> Add to Home Screen');
               }}
-              className="px-2.5 py-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg text-[10px] shadow-xs"
+              className="px-2.5 py-1 bg-[#00A884] hover:bg-[#008F6F] text-white font-bold rounded-lg text-[10px] shadow-xs transition"
             >
               Install
             </button>

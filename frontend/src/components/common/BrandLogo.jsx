@@ -22,16 +22,16 @@ export function BrandLogo({ size = 'default', showSubtitle = true, inverted = fa
       <div className="min-w-0 flex-1 overflow-hidden">
         <div className={`font-outfit font-black tracking-tight leading-none truncate ${
           isLarge ? 'text-xl sm:text-2xl' : isSmall ? 'text-sm sm:text-base' : 'text-base sm:text-lg'
-        } ${inverted ? 'text-white' : 'text-slate-100'}`}>
+        } ${inverted ? 'text-slate-900 dark:text-white' : 'text-slate-900 dark:text-slate-100'}`}>
           SR FABRICATION
         </div>
         {showSubtitle && (
           <div className={`font-mono uppercase tracking-wider leading-tight mt-1 ${
             isLarge ? 'text-[11px]' : 'text-[9px]'
-          } text-cyan-400 font-semibold items-center gap-1 min-w-0 max-w-full overflow-hidden ${subtitleClassName ? subtitleClassName : 'flex'}`}>
+          } text-[#00A884] dark:text-emerald-400 font-semibold items-center gap-1 min-w-0 max-w-full overflow-hidden ${subtitleClassName ? subtitleClassName : 'flex'}`}>
             <span className="truncate min-w-0">RAILWAY PARKING MANAGEMENT SYSTEM</span>
-            <span className="text-slate-600 shrink-0">•</span>
-            <span className="text-emerald-400 shrink-0 font-bold">LIVE</span>
+            <span className="text-slate-400 dark:text-slate-600 shrink-0">•</span>
+            <span className="text-[#00A884] dark:text-emerald-400 shrink-0 font-bold">LIVE</span>
           </div>
         )}
       </div>

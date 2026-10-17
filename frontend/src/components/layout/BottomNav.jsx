@@ -48,7 +48,7 @@ export function BottomNav({ onOpenMenu }) {
 
   return (
     <nav
-      className="whatsapp-bottom-bar fixed bottom-0 left-0 right-0 z-60 bg-[#0B1120]/95 backdrop-blur-xl border-t border-white/10 lg:hidden shadow-[0_-4px_25px_rgba(0,0,0,0.5)] safe-bottom no-print"
+      className="whatsapp-bottom-bar fixed bottom-0 left-0 right-0 z-60 bg-white/95 dark:bg-[#111B21]/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/10 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_25px_rgba(0,0,0,0.5)] safe-bottom no-print transition-colors"
       aria-label="Mobile Navigation"
     >
       <div className="flex items-center justify-around px-1 py-1.5 max-w-lg mx-auto">
@@ -61,8 +61,8 @@ export function BottomNav({ onOpenMenu }) {
               className={({ isActive }) =>
                 `whatsapp-nav-item flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-all duration-200 min-w-0 select-none active:scale-90 ${
                   isActive
-                    ? 'text-white font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'text-slate-900 dark:text-white font-bold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                 }`
               }
             >
@@ -71,8 +71,8 @@ export function BottomNav({ onOpenMenu }) {
                   <div
                     className={`whatsapp-icon-pill px-3.5 py-1 rounded-full transition-all duration-200 flex items-center justify-center ${
                       isActive
-                        ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
-                        : 'text-slate-400'
+                        ? 'bg-[#00A884]/15 dark:bg-[#00A884]/25 text-[#00755B] dark:text-[#2DD4BF] ring-1 ring-[#00A884]/30 shadow-xs'
+                        : 'text-slate-500 dark:text-slate-400'
                     }`}
                   >
                     <Icon className="w-5 h-5 shrink-0" />
@@ -80,8 +80,8 @@ export function BottomNav({ onOpenMenu }) {
                   <span
                     className={`text-[10px] tracking-tight mt-0.5 truncate transition-colors duration-200 ${
                       isActive
-                        ? 'text-emerald-400 font-bold'
-                        : 'text-slate-400 font-medium'
+                        ? 'text-[#00755B] dark:text-[#2DD4BF] font-bold'
+                        : 'text-slate-500 dark:text-slate-400 font-medium'
                     }`}
                   >
                     {item.label}

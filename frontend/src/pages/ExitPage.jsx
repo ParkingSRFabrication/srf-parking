@@ -107,24 +107,24 @@ export function ExitPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in text-slate-100">
+    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in text-slate-800 dark:text-slate-100">
       {/* Page Title */}
       <div>
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[11px] font-bold text-cyan-400 mb-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#00A884]/10 border border-[#00A884]/30 rounded-full text-[11px] font-bold text-[#00A884] mb-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00A884] animate-pulse" />
           <span>VEHICLE CHECK-OUT • BARRIER GATE EXIT</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black font-outfit text-white tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">
           Vehicle Exit & Fee Settlement
         </h1>
-        <p className="text-xs text-slate-400 mt-0.5">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
           Scan QR barcode or enter token / vehicle plate to calculate parking duration and charges
         </p>
       </div>
 
       {/* Lookup Card */}
-      <div className="glass-panel rounded-3xl border border-white/10 p-5 sm:p-7 space-y-3">
-        <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider font-mono">
+      <div className="bg-white dark:bg-[#111B21] rounded-3xl border border-slate-200/90 dark:border-white/10 p-5 sm:p-7 space-y-3 shadow-sm dark:shadow-2xl">
+        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
           Find Active Parking Session
         </label>
         <div className="flex flex-col sm:flex-row gap-2.5">
@@ -136,13 +136,13 @@ export function ExitPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value.toUpperCase())}
               onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
-              className="w-full pl-12 pr-10 py-3.5 text-base sm:text-lg font-mono font-black uppercase bg-slate-950 border-2 border-white/10 rounded-2xl text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition"
+              className="w-full pl-12 pr-10 py-3.5 text-base sm:text-lg font-mono font-black uppercase bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884] focus:ring-1 focus:ring-[#00A884] transition"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition"
                 aria-label="Clear query"
               >
                 ✕
@@ -155,7 +155,7 @@ export function ExitPage() {
               type="button"
               onClick={() => handleLookup()}
               disabled={searching || !searchQuery.trim()}
-              className="flex-1 sm:flex-none px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 shadow-glow min-h-[48px]"
+              className="flex-1 sm:flex-none px-6 py-3.5 bg-[#00A884] hover:bg-[#008F6F] active:scale-[0.99] text-white font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 shadow-md min-h-[48px]"
             >
               {searching ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -167,17 +167,17 @@ export function ExitPage() {
             <button
               type="button"
               onClick={() => setShowScanner(true)}
-              className="px-4 py-3.5 bg-slate-900 hover:bg-slate-800 text-cyan-300 font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm border border-cyan-500/30 min-h-[48px]"
+              className="px-4 py-3.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-800 dark:text-[#00A884] font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm border border-slate-200 dark:border-[#00A884]/30 min-h-[48px]"
             >
-              <Camera className="w-5 h-5 text-cyan-400" />
+              <Camera className="w-5 h-5 text-[#00A884]" />
               <span className="text-xs">Camera Scan</span>
             </button>
           </div>
         </div>
 
         {searchError && (
-          <div className="mt-3 p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-300 text-xs font-semibold flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          <div className="mt-3 p-3 bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-800 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
             <span>{searchError}</span>
           </div>
         )}
@@ -185,11 +185,11 @@ export function ExitPage() {
 
       {/* Active Session Billing Details Card */}
       {activeSession && liveCharge && (
-        <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden animate-slide-up">
+        <div className="bg-white dark:bg-[#111B21] rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-lg dark:shadow-2xl overflow-hidden animate-slide-up">
           {/* Header */}
-          <div className="bg-[#142B4A] p-5 sm:p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10">
+          <div className="bg-[#00A884] p-5 sm:p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#008F6F]">
             <div>
-              <div className="text-xs text-cyan-300 font-mono font-semibold uppercase">
+              <div className="text-xs text-emerald-100 font-mono font-semibold uppercase">
                 Active Session Found
               </div>
               <div className="text-xl sm:text-2xl font-mono font-black text-white mt-0.5">
@@ -198,10 +198,10 @@ export function ExitPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="bg-white/10 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider text-cyan-300 border border-white/10">
+              <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider text-white border border-white/20">
                 {activeSession.vehicleNumber}
               </span>
-              <span className="bg-indigo-600/80 px-3 py-1 rounded-full text-xs font-semibold capitalize">
+              <span className="bg-black/20 px-3 py-1 rounded-full text-xs font-semibold capitalize text-white">
                 {CATEGORY_LABELS[activeSession.vehicleType] || activeSession.vehicleType}
               </span>
             </div>
@@ -210,38 +210,38 @@ export function ExitPage() {
           <div className="p-5 sm:p-8 space-y-6">
             {/* Tariff & Timing Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-white/5">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-950/80 rounded-2xl border border-slate-200/80 dark:border-white/5">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block font-mono">
                   Entry Time
                 </span>
-                <span className="font-semibold text-xs text-white mt-1 block">
+                <span className="font-semibold text-xs text-slate-900 dark:text-white mt-1 block">
                   {formatDateTime(activeSession.entryTime)}
                 </span>
               </div>
 
-              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-white/5">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-950/80 rounded-2xl border border-slate-200/80 dark:border-white/5">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block font-mono">
                   Duration
                 </span>
-                <span className="font-bold text-xs text-cyan-400 mt-1 block">
+                <span className="font-bold text-xs text-[#00A884] mt-1 block">
                   {formatDuration(liveCharge.durationMinutes)}
                 </span>
               </div>
 
-              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-white/5">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-950/80 rounded-2xl border border-slate-200/80 dark:border-white/5">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block font-mono">
                   Billable Units
                 </span>
-                <span className="font-bold text-xs text-white mt-1 block">
+                <span className="font-bold text-xs text-slate-900 dark:text-white mt-1 block">
                   {liveCharge.billableUnits} Slab(s)
                 </span>
               </div>
 
-              <div className="p-3.5 bg-slate-950/80 rounded-2xl border border-white/5">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-950/80 rounded-2xl border border-slate-200/80 dark:border-white/5">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block font-mono">
                   Rate Policy
                 </span>
-                <span className="font-semibold text-xs text-emerald-400 mt-1 block">
+                <span className="font-semibold text-xs text-[#00A884] mt-1 block">
                   ₹{liveCharge.firstSlabAmount} + ₹{liveCharge.additionalDayAmount}/slab
                 </span>
               </div>
@@ -249,13 +249,13 @@ export function ExitPage() {
 
             {/* Monthly Pass Coverage Banner */}
             {liveCharge.isCoveredByPass && (
-              <div className="p-4 bg-purple-500/15 border border-purple-500/30 rounded-2xl flex items-center gap-3">
-                <ShieldCheck className="w-6 h-6 text-purple-400 shrink-0" />
+              <div className="p-4 bg-purple-50 dark:bg-purple-500/15 border border-purple-200 dark:border-purple-500/30 rounded-2xl flex items-center gap-3">
+                <ShieldCheck className="w-6 h-6 text-purple-600 dark:text-purple-400 shrink-0" />
                 <div className="text-xs">
-                  <div className="font-bold text-sm text-purple-200">
+                  <div className="font-bold text-sm text-purple-900 dark:text-purple-200">
                     Active Monthly Pass Holder
                   </div>
-                  <div className="text-purple-300 mt-0.5">
+                  <div className="text-purple-700 dark:text-purple-300 mt-0.5">
                     Pass: <strong>{liveCharge.passDetails?.passNumber}</strong> (Customer: {liveCharge.passDetails?.customerName}).
                     Parking fee is fully exempt (₹0).
                   </div>
@@ -264,16 +264,16 @@ export function ExitPage() {
             )}
 
             {/* Calculated Fee Highlight Box */}
-            <div className="p-5 sm:p-6 bg-slate-950 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-5 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block font-mono">
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block font-mono">
                   Total Parking Fee Payable
                 </span>
-                <div className="text-3xl font-black font-mono text-emerald-400 mt-1">
+                <div className="text-3xl font-black font-mono text-[#00A884] mt-1">
                   {formatCurrency(liveCharge.amountToPay)}
                 </div>
                 {liveCharge.isGracePeriod && (
-                  <span className="text-xs text-cyan-400 font-semibold">
+                  <span className="text-xs text-[#00A884] font-semibold">
                     Within free grace period
                   </span>
                 )}
@@ -282,7 +282,7 @@ export function ExitPage() {
               {/* Payment Method Selector */}
               {!liveCharge.isCoveredByPass && liveCharge.amountToPay > 0 && (
                 <div className="w-full sm:w-auto">
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 font-mono">
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 font-mono">
                     Select Payment Method
                   </label>
                   <div className="grid grid-cols-4 sm:flex gap-2">
@@ -293,8 +293,8 @@ export function ExitPage() {
                         onClick={() => setPaymentMethod(method)}
                         className={`min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition border text-center ${
                           paymentMethod === method
-                            ? 'bg-indigo-600 text-white border-indigo-500 shadow-glow'
-                            : 'bg-slate-900 text-slate-300 border-white/10 hover:bg-slate-800'
+                            ? 'bg-[#00A884] text-white border-[#00A884] shadow-sm'
+                            : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-slate-800'
                         }`}
                       >
                         {method}
@@ -309,7 +309,7 @@ export function ExitPage() {
                         placeholder="UPI Transaction ID / UTR (Optional)"
                         value={paymentReference}
                         onChange={(e) => setPaymentReference(e.target.value)}
-                        className="w-full px-3 py-2 text-xs bg-slate-900 border border-white/10 rounded-xl text-white focus:outline-none focus:border-cyan-400"
+                        className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#00A884]"
                       />
                     </div>
                   )}
@@ -318,8 +318,8 @@ export function ExitPage() {
             </div>
 
             {exitError && (
-              <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-300 text-xs font-semibold flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              <div className="p-3 bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-800 dark:text-rose-300 text-xs font-semibold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
                 <span>{exitError}</span>
               </div>
             )}
@@ -330,7 +330,7 @@ export function ExitPage() {
                 type="button"
                 onClick={handleProcessExit}
                 disabled={processingExit}
-                className="w-full min-h-[56px] py-4 px-6 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-glowEmerald transition flex items-center justify-center gap-2 disabled:opacity-50 transform active:scale-[0.99]"
+                className="w-full min-h-[56px] py-4 px-6 bg-[#00A884] hover:bg-[#008F6F] active:scale-[0.99] text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {processingExit ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

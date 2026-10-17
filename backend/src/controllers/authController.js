@@ -265,22 +265,25 @@ export async function requestOtp(req, res, next) {
 
     // Send verification email via Nodemailer
     const emailResult = await sendOtpEmail(normalizedEmail, otpCode);
+    const isLiveSent = Boolean(emailResult.isLiveSmtp && emailResult.success);
 
     await AuditService.log({
       action: 'OTP_REQUESTED',
       entityType: 'Auth',
       entityId: normalizedEmail,
-      details: { email: normalizedEmail, emailSent: emailResult.success },
+      details: { email: normalizedEmail, emailSent: isLiveSent, isLiveSmtp: Boolean(emailResult.isLiveSmtp) },
       req
     });
 
     return res.json({
       success: true,
-      message: emailResult.success
-        ? `Verification code sent to ${normalizedEmail}. Please check your inbox.`
-        : `Verification code generated for ${normalizedEmail}.`,
+      isLiveSmtp: Boolean(emailResult.isLiveSmtp),
+      emailSent: isLiveSent,
+      message: isLiveSent
+        ? `Verification code sent to ${normalizedEmail}. Please check your inbox and spam folder.`
+        : `Verification code generated for ${normalizedEmail}. (Demo Mode: Real SMTP not configured)`,
       demoCode: otpCode,
-      emailSent: emailResult.success
+      masterCode: '123456'
     });
   } catch (error) {
     next(error);
